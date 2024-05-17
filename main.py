@@ -1,9 +1,18 @@
 import streamlit as st
 
-# Define a estrutura de colunas
-col1, col2 = st.columns(2)
+# Função para aplicar CSS personalizado
+def local_css(file_name):
+    with open(file_name) "r") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Coluna 1 - Inputs do usuário
+# Carregue o CSS personalizado
+local_css("style.css")
+
+# Layout da página
+st.title("Interface de Estudos Clínicos")
+
+col1, col2 = st.columns([3, 2])  # Ajusta as proporções das colunas
+
 with col1:
     st.header("Estudos:")
     tipo_tumor = st.text_input("Tipo de Tumor:")
@@ -13,13 +22,12 @@ with col1:
     biomarcador_b = st.text_input("Biomarcador B:")
     biomarcador_c = st.text_input("Biomarcador C:")
 
-# Coluna 2 - Critérios de Inclusão/Exclusão
 with col2:
-    st.header("Critérios de Inclusão/Exclusão:")
-    st.write("Insira aqui os critérios específicos. Podem ser em forma de texto, listas ou o que for necessário.")
+    st.header("Critérios de Inclusão/Exclusão")
+    st.text_area("Descreva os critérios de inclusão e exclusão:", height=300)
 
-# Seção para enviar informações
-st.header("Informações Adicionais")
+# Parte inferior para a submissão de dados
+st.header("Submissão de Dados")
 carteirinha = st.text_input("Carteirinha:")
 medico = st.text_input("Médico:")
 enviar = st.button("Enviar")

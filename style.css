@@ -1,0 +1,24 @@
+/* style.css */
+body {
+    font-family: Arial, sans-serif;
+}
+
+.css-2trqyj {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #CCC;
+}
+
+input {
+    border-radius: 5px;
+    border: 1px solid #AAA;
+    padding: 5px;
+}
+
+.stButton>button {
+    width: 100%;
+    color: white;
+    background-color: blue;
+    padding: 10px;
+    border-radius: 5px;
+}
