@@ -1,0 +1,60 @@
+Tipo_cancer,BiomarkKi-67,BiomarkesMSI1,BiomarkBraf,BiomarkKRAS,BiomarkNRAS,BiomarkesEGFR,BiomarkesALK,BiomarkesROS1,BiomarkesBRCA1_BRCA2,BiomarkHer,BiomarkesPD-L1,BiomarkProgesterone,Biomarkestrogen
+Adenocarcinoma,0,0,0,0,0,0,0,0,0,5,1,0,0
+Carcinoma,0,2,1,0,0,2,1,1,0,0,8,0,0
+Carcinoma de Células Escamosas,0,0,0,0,0,0,0,0,0,0,2,0,0
+Carcinoma de Pulmão de Células Não Pequenas,0,0,3,2,0,7,5,6,0,1,4,0,0
+Carcinoma de células escamosas de cabeça e pescoço,0,1,1,0,0,1,0,0,0,0,1,0,0
+Carcinoma de células escamosas do esôfago,0,0,1,0,0,1,1,1,0,0,1,0,0
+Colangiocarcinoma,0,0,0,0,0,0,0,0,0,0,0,0,0
+Câncer,1,3,3,0,0,2,3,1,0,1,3,0,0
+Câncer anal,0,0,0,0,0,0,0,0,0,0,0,0,0
+Câncer colorretal,0,1,0,0,0,0,0,0,0,1,0,0,0
+Câncer de Boca,0,0,0,0,0,0,0,0,0,0,0,0,0
+Câncer de Cabeça e Pescoço,0,0,0,0,0,1,0,0,0,0,0,0,0
+Câncer de Endométrio,0,0,0,0,0,0,0,0,0,0,0,0,0
+Câncer de Estômago,0,0,0,0,0,0,0,0,0,1,0,0,0
+Câncer de Esôfago,0,0,0,0,0,0,0,0,0,0,1,0,0
+Câncer de Pulmão,0,0,5,3,0,24,16,7,0,2,13,0,0
+Câncer de Tireóide,0,0,1,0,0,1,0,0,0,0,0,0,0
+Câncer de bexiga,0,0,0,0,0,0,0,0,0,0,3,0,0
+Câncer de colo de útero,0,0,0,0,0,0,1,0,0,0,1,0,0
+Câncer de células de Merkel,0,0,0,0,0,0,0,0,0,0,1,0,0
+Câncer de cólon,0,0,0,0,0,0,0,0,0,0,0,0,0
+Câncer de mama,1,0,0,0,0,1,2,0,2,30,7,8,13
+Câncer de próstata,0,0,0,0,0,1,1,0,0,0,0,0,2
+Câncer de rim,0,0,0,0,0,0,0,0,0,0,0,0,0
+Câncer de sangue,0,0,0,0,0,0,0,0,0,0,0,0,0
+Câncer do reto,0,0,0,0,0,0,0,0,0,0,0,0,0
+Câncer do trato biliar,0,0,0,0,0,0,0,0,0,0,0,0,0
+Disfunção Ventricular,0,0,0,0,0,0,0,0,0,1,0,0,0
+Doença de Kahler,0,0,0,0,0,1,0,0,0,0,1,0,0
+Doenças cardiovasculares,0,0,0,0,0,0,0,0,0,0,0,0,0
+Doenças da Tireóide,0,0,0,0,0,0,0,0,0,0,0,0,0
+Doenças virais,0,0,0,0,0,0,0,0,0,0,0,0,0
+Dor do câncer,0,0,0,0,0,0,0,0,0,0,0,0,0
+Epilepsia,0,0,0,0,0,0,0,0,0,0,0,0,0
+Glioblastoma,0,0,1,0,0,0,0,0,0,0,0,0,0
+Hemangioma,0,0,0,0,0,0,0,0,0,0,0,0,0
+Infeccção,0,0,0,0,0,0,0,0,0,0,0,0,0
+Infecção pelo vírus Epstein-Barr,0,0,0,0,0,0,0,0,0,0,0,0,0
+Infecções por Papilomavírus,0,0,0,0,0,0,0,0,0,0,0,0,0
+Insuficiência Ovariana Primária,0,0,0,0,0,0,0,0,0,0,0,0,0
+Leucemia,0,0,0,0,0,1,0,0,0,0,0,0,0
+Linfoma,0,0,0,0,0,1,0,0,0,0,1,0,0
+Melanoma,0,0,3,0,0,0,1,0,0,0,2,0,0
+Mesotelioma,0,0,0,0,0,0,0,0,0,0,0,0,0
+Metástase,0,0,0,0,0,0,0,0,0,0,0,0,0
+Miastenia grave,0,0,0,0,0,0,0,0,0,0,0,0,0
+Mielofibrose primária,0,0,0,0,0,0,0,0,0,0,0,0,0
+Mucosite,0,0,0,0,0,0,0,0,0,0,0,0,0
+Nódulo da tireóide,0,0,0,0,0,0,0,0,0,0,0,0,0
+Osteossarcoma,0,0,0,0,0,0,0,0,0,0,0,0,0
+Outro,0,1,0,0,0,3,1,0,1,0,2,0,0
+Policitemia Vera,0,0,0,0,0,0,0,0,0,0,0,0,0
+Pré-leucemia,0,0,0,0,0,0,0,0,0,0,0,0,0
+Sarcoma,0,0,0,0,0,0,0,0,0,0,0,0,0
+Sarcoma de Kaposi,0,0,0,0,0,0,0,0,0,0,0,0,0
+Toxicidade Cardíaca,0,0,0,0,0,0,0,0,0,0,0,0,0
+Transtornos de ansiedade,0,0,0,0,0,0,0,0,0,0,0,0,0
+Tromboembolismo,0,0,0,0,0,0,0,0,0,0,0,0,0
+Tumores estromais gastrointestinais,0,0,0,0,0,0,0,0,0,0,0,0,0
