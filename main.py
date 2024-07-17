@@ -78,6 +78,15 @@ opcoes_biomarcadores = {
     'EGFR': ['Mutado', 'Não mutado'],
 }
 
+stages_list = [
+    ' ', 'I', 'IA', 'IB', 'IC', 'II', 'IIA', 'IIB', 'IIC', 'III', 'IIIA', 'IIIB', 'IIIC', 'IV', 'IVA', 'IVB', 'IVC',
+    'Tx', 'T0', 'Ta', 'Tis', 'Tis(DCIS)', 'Tis(LAMN)', 'Tis(Paget)', 'T1', 'T1mi', 'T1a', 'T1a1', 'T1a2', 'T1b', 'T1b1', 'T1b2', 'T1b3', 'T1c', 'T1c1', 'T1c2', 'T1c3', 'T1d',
+    'T2', 'T2a', 'T2a1', 'T2a2', 'T2b', 'T2c', 'T2d', 'T3', 'T3a', 'T3b', 'T3c', 'T3d', 'T3e', 'T4', 'T4a', 'T4b', 'T4c', 'T4d', 'T4e',
+    'Nx', 'N0', 'N0(sn)', 'N0a', 'N0a(sn)', 'N0b', 'N0b(sn)', 'N0(i+)', 'N0(mol+)', 'N1', 'N1(sn)', 'N1mi', 'N1mi(sn)', 'N1a', 'N1a(sn)', 'N1b', 'N1b(sn)', 'N1c', 'N1c(sn)',
+    'N2', 'N2mi', 'N2a', 'N2b', 'N2c', 'N3', 'N3a', 'N3b', 'N3c', 'Mx', 'M0', 'M0(i+)', 'M1', 'M1a', 'M1a(0)', 'M1a(1)', 'M1b', 'M1b(0)', 'M1b(1)', 'M1c', 'M1c(0)', 'M1c(1)', 'M1d', 'M1d(0)', 'M1d(1)',
+    'ypT2-4a', 'ypN+', 'pT2-4a', 'pN+'
+]
+
 biomarcadores_numericos = {
     'Ki-67': 'Valor numérico',
 }
@@ -138,19 +147,37 @@ col1, col2 = st.columns([1, 2])  # Ajusta as proporções das colunas
 with col1:
     tipo_tumor = st.selectbox(
         "Tipo de Tumor:", options=[None] + list(biomarcadores_dict.keys()), format_func=lambda x: '' if x is None else x)
-    estadiamento = st.selectbox("Estadiamento:", options=[None, 'I', 'II', 'III'], format_func=lambda x: '' if x is None else x)
+    estadiamento = st.selectbox("Estadiamento:", options=stages_list, format_func=lambda x: '' if x is None else x)
     if tipo_tumor:
         # Exibir biomarcadores com base no tipo de tumor selecionado
         biomarcadores_resultados = exibir_biomarcadores(tipo_tumor)
 
+
 with col2:
-    # Filtrar estudos com base no tipo de tumor e estadiamento selecionado
     estudos_filtrados = filtrar_estudos_tipo_tumor(estudos_df, tipo_tumor)
     estudos_filtrados = filtrar_estudos_estadiamento(estudos_filtrados, estadiamento)
     st.header("Estudos:")
-    st.dataframe(estudos_filtrados[['nctId','briefTitle','conditions','studyType','phases','interventions','eligibilityCriteria','ECOG_score','KPS_scores','metastasis','Estagio_final','Estagio_Inicial','Extensao_tumor_locally_advanced','Extensao_tumor_unresectable','Extensao_tumor_metastatic','Extensao_tumor_Lesions','Extensao_tumor_metastases','Câncer de Mama Triplo Negativo']], height=400)  # Ajusta a altura da tabela
+    st.dataframe(estudos_filtrados[['nctId','briefTitle','conditions','studyType','phases','interventions','eligibilityCriteria','ECOG_score','KPS_scores','metastasis','Estagio_final','Estagio_Inicial','Extensao_tumor_locally_advanced','Extensao_tumor_unresectable','Extensao_tumor_metastatic','Extensao_tumor_Lesions','Extensao_tumor_metastases','Câncer de Mama Triplo Negativo']], height=400)
     st.header("Critérios de Inclusão/Exclusão")
-    st.text_area("Critérios de inclusão e exclusão:", height=150)
+    
+    st.markdown("""
+                <style>
+                div[data-testid="stTextArea"] textarea {
+                background-color: #add8e6;  /* Cor de fundo azul claro */
+                color: black;              /* Cor do texto */
+                }
+                </style>
+                """, unsafe_allow_html=True)
+    criteria_text = f"Tipo de Tumor Selecionado: {tipo_tumor}\nEstadiamento Selecionado: {estadiamento}"
+    st.text_area("Critérios de inclusão e exclusão:", value=criteria_text, height=150, disabled=True)
+
+    
+    
+
+    
+
+
+
 # Parte inferior para a submissão de dados
 st.header("Submissão de Dados")
 carteirinha = st.text_input("Carteirinha:")
