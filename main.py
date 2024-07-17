@@ -14,9 +14,6 @@ local_css("style.css")
 file_path = 'df_final_matches_tipo_cancer.csv'  # Substitua pelo caminho do seu arquivo
 estudos_df = pd.read_csv(file_path)
 
-# Exibir os primeiros registros do DataFrame para verificar a estrutura
-#st.write("Primeiros registros do DataFrame:", estudos_df.head())
-
 # Equivalência entre algarismos romanos e os valores no dataset
 equivalencia_estadiamento = {
     'I': 'I',
@@ -90,13 +87,19 @@ def exibir_biomarcadores(tipo_tumor):
     biomarcadores = biomarcadores_dict.get(tipo_tumor, [])
     resultados = {}
     for biomarcador in biomarcadores:
+        # Incluir uma opção nula ao início da lista de opções para cada biomarcador
         if biomarcador in biomarcadores_numericos:
+            # Para biomarcadores numéricos, você pode decidir se faz sentido ter uma opção nula
             resultado = st.number_input(
-                f"{biomarcador}: {biomarcadores_numericos[biomarcador]}", format="%f")
+                f"{biomarcador}: {biomarcadores_numericos[biomarcador]}", format="%f", key=f"{biomarcador}_num")
         else:
-            opcoes = opcoes_biomarcadores.get(
+            opcoes = [''] + opcoes_biomarcadores.get(
                 biomarcador, ['Positivo', 'Negativo', 'Inconclusivo'])
-            resultado = st.selectbox(f"{biomarcador}:", options=opcoes)
+            resultado = st.selectbox(
+                f"{biomarcador}:",
+                options=opcoes,
+                index=0,  # Define a opção nula como a opção padrão inicial
+                key=f"{biomarcador}_sel")
         resultados[biomarcador] = resultado
     return resultados
 
