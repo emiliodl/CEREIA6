@@ -20,7 +20,65 @@ equivalencia_estadiamento = {
     'II': 'II',
     'III': 'III'
 }
-
+mesh_dict = {'Lung Neoplasms': ['Carcinoma, Non-Small-Cell Lung'],
+             'Biliary Tract Neoplasms': [],
+             'Esophageal Neoplasms': ['Esophageal Squamous Cell Carcinoma'], 
+             'Lymphoma': ['Lymphoma, Non-Hodgkin', 'Lymphoma, B-Cell'], 
+             'Neoplasms': [], 
+             'Breast Neoplasms': [], 
+             'Carcinoma': ['Carcinoma, Squamous Cell', 'Squamous Cell Carcinoma of Head and Neck'], 
+             'Anxiety Disorders': [], 
+             'Primary Ovarian Insufficiency': ['Menopause, Premature'], 
+             'Neoplasm Metastasis': ['Sarcoma'], 
+             'Leukemia': ['Leukemia, Lymphoid', 'Leukemia, Lymphocytic, Chronic, B-Cell'], 
+             'Carcinoma, Squamous Cell': ['Squamous Cell Carcinoma of Head and Neck', 'Head and Neck Neoplasms'], 
+             'Multiple Myeloma': ['Neoplasms, Plasma Cell'], 
+             'Carcinoma, Non-Small-Cell Lung': [], 
+             'Melanoma': [],
+             'Uterine Cervical Neoplasms': [], 
+             'Urinary Bladder Neoplasms': ['Non-Muscle Invasive Bladder Neoplasms'], 
+             'Prostatic Neoplasms': ['Hypersensitivity'], 
+             'Sarcoma, Kaposi': ['Sarcoma'], 
+             'Adenocarcinoma': ['Stomach Neoplasms'], 
+             'Head and Neck Neoplasms': [], 
+             'Carcinoma, Merkel Cell': ['Carcinoma'], 
+             'Preleukemia': ['Anemia', 'Myelodysplastic Syndromes', 'Syndrome'], 
+             'Endometrial Neoplasms': [], 
+             'Cholangiocarcinoma': [], 
+             'Thromboembolism': ['Venous Thromboembolism'], 
+             'Polycythemia Vera': ['Primary Myelofibrosis', 'Polycythemia', 'Thrombocytosis', 'Thrombocythemia, Essential'], 
+             'Colorectal Neoplasms': [], 
+             'Papillomavirus Infections': ['Uterine Cervical Neoplasms'], 
+             'Mucositis': ['Xerostomia'], 
+             'Sarcoma': [], 
+             'Infections': ['Communicable Diseases', 'Papillomavirus Infections', 'Squamous Cell Carcinoma of Head and Neck'], 
+             'Hematologic Neoplasms': ['Graft vs Host Disease'], 
+             'Osteosarcoma': ['Mucositis', 'Stomatitis'], 
+             'Virus Diseases': ['Neoplasms', 'Hematologic Neoplasms', 'Graft vs Host Disease'], 
+             'Stomach Neoplasms': [], 
+             'Glioblastoma': [], 
+             'Thyroid Diseases': [], 
+             'Thyroid Nodule': ['Thyroid Diseases'], 
+             'Myasthenia Gravis': ['Muscle Weakness'], 
+             'Epstein-Barr Virus Infections': ['Lymphoma', 'Lymphoproliferative Disorders'], 
+             'Mouth Neoplasms': ['Head and Neck Neoplasms', 'Mucositis', 'Stomatitis'], 
+             'Cardiovascular Diseases': ['Cardiotoxicity'], 
+             'Mesothelioma': ['Mesothelioma, Malignant'], 
+             'Epilepsy': [], 
+             'Esophageal Squamous Cell Carcinoma': [], 
+             'Anus Neoplasms': [], 
+             'Cardiotoxicity': [], 
+             'Colonic Neoplasms': ['Thrombosis', 'Venous Thrombosis'], 
+             'Thyroid Neoplasms': ['Thyroid Diseases'], 
+             'Postoperative Complications': ['Postoperative Nausea and Vomiting'], 
+             'Kidney Neoplasms': ['Carcinoma, Renal Cell'], 
+             'Ventricular Dysfunction': ['Ventricular Dysfunction, Left'], 
+             'Primary Myelofibrosis': [], 
+             'Hemangioma': ['Arteriovenous Malformations', 'Congenital Abnormalities'], 
+             'Cancer Pain': [], 
+             'Squamous Cell Carcinoma of Head and Neck': [], 
+             'Rectal Neoplasms': [], 
+             'Gastrointestinal Stromal Tumors': []}
 biomarcadores_dict = {
     'Câncer de Pulmão': ['BRAF', 'EGFR', 'ALK', 'ROS1', 'PD-L1', 'KRAS'],
     'Câncer de mama': ['HER', 'Estrogen', 'Progesterone', 'Ki-67', 'ALK', 'BRCA1', 'BRCA2'],
@@ -170,12 +228,6 @@ with col2:
                 """, unsafe_allow_html=True)
     criteria_text = f"Tipo de Tumor Selecionado: {tipo_tumor}\nEstadiamento Selecionado: {estadiamento}"
     st.text_area("Critérios de inclusão e exclusão:", value=criteria_text, height=150, disabled=True)
-
-    
-    
-
-    
-
 
 
 # Parte inferior para a submissão de dados
