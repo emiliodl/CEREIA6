@@ -11,7 +11,7 @@ def local_css(file_name):
 local_css("style.css")
 
 # Carregar o dataset dos estudos clínicos
-file_path = 'df_final_matches_tipo_cancer.csv'  # Substitua pelo caminho do seu arquivo
+file_path = 'df_final_matches_tipo_cancer_atualizado.csv'  # Substitua pelo caminho do seu arquivo
 estudos_df = pd.read_csv(file_path)
 
 # Equivalência entre algarismos romanos e os valores no dataset
@@ -80,43 +80,43 @@ mesh_dict = {'Lung Neoplasms': ['Carcinoma, Non-Small-Cell Lung'],
              'Rectal Neoplasms': [], 
              'Gastrointestinal Stromal Tumors': []}
 biomarcadores_dict = {
-    'Câncer de Pulmão': ['BRAF', 'EGFR', 'ALK', 'ROS1', 'PD-L1', 'KRAS'],
-    'Câncer de mama': ['HER', 'Estrogen', 'Progesterone', 'Ki-67', 'ALK', 'BRCA1', 'BRCA2'],
-    'Câncer de trato biliar': ['X'],
-    'Câncer': ['Ki-67', 'MSI', 'BRAF', 'EGFR', 'ALK', 'ROS1', 'HER', 'PD-L1'],
+    'Lung Neoplasms': ['BRAF', 'EGFR', 'ALK', 'ROS1', 'PD-L1', 'KRAS'],
+    'Breast Cancer': ['HER', 'Estrogen', 'Progesterone', 'Ki-67', 'ALK', 'BRCA1', 'BRCA2'],
+    'Biliary Tract Cancer': ['X'],
+    'Cancer': ['Ki-67', 'MSI', 'BRAF', 'EGFR', 'ALK', 'ROS1', 'HER', 'PD-L1'],
     'Carcinoma': ['MSI', 'BRAF', 'EGFR', 'ALK', 'ROS1'],
-    'Leucemia': ['X'],
-    'Metástase': ['X'],
-    'Doença de kahler': ['PD-L1'],
-    'Câncer anal': ['X'],
-    'Câncer de bexiga': ['PD-L1'],
-    'Carcinoma de Pulmão de Células Não Pequenas': ['BRAF', 'EGFR', 'ALK', 'ROS1', 'PD-L1', 'KRAS'],
-    'Outro': ['MSI', 'PD-L1'],
-    'Câncer de colo de útero': ['ALK', 'PD-L1'],
+    'Leukemia': ['X'],
+    'Metastasis': ['X'],
+    'Kahlers Disease': ['PD-L1'],
+    'Anal Cancer': ['X'],
+    'Bladder Cancer': ['PD-L1'],
+    'Non-Small Cell Lung Carcinoma': ['BRAF', 'EGFR', 'ALK', 'ROS1', 'PD-L1', 'KRAS'],
+    'Other': ['MSI', 'PD-L1'],
+    'Cervical Cancer': ['ALK', 'PD-L1'],
     'Adenocarcinoma': ['PD-L1'],
-    'Câncer de Cabeça e Pescoço': ['EGFR'],
-    'Câncer de células de Merkel': ['PD-L1'],
-    'Pré-leucemia': ['X'],
-    'Câncer de Endométrio': ['X'],
-    'Câncer de Esôfago': ['PD-L1'],
-    'Câncer colorretal': ['MSI', 'HER'],
+    'Head and Neck Cancer': ['EGFR'],
+    'Merkel Cell Cancer': ['PD-L1'],
+    'Pre-Leukemia': ['X'],
+    'Endometrial Cancer': ['X'],
+    'Esophageal Cancer': ['PD-L1'],
+    'Colorectal Cancer': ['MSI', 'HER'],
     'Sarcoma': ['X'],
-    'Miastenia grave': ['X'],
-    'Mesotelioma': ['X'],
-    'Carcinoma de células escamosas do esôfago': ['BRAF', 'ALK', 'EGFR', 'ROS1', 'PD-L1'],
-    'Carcinoma de Células escamosas de cabeça e pescoço': ['MSI', 'BRAF', 'EGFR', 'PD-L1'],
-    'Câncer de rim': ['X'],
+    'Myasthenia Gravis': ['X'],
+    'Mesothelioma': ['X'],
+    'Esophageal Squamous Cell Carcinoma': ['BRAF', 'ALK', 'EGFR', 'ROS1', 'PD-L1'],
+    'Head and Neck Squamous Cell Carcinoma': ['MSI', 'BRAF', 'EGFR', 'PD-L1'],
+    'Kidney Cancer': ['X'],
     'Glioblastoma': ['BRAF'],
-    'Câncer do reto': ['X'],
-    'Tumores estromais gastrointestinais': ['X'],
-    'Cancêr de tireóide': ['BRAF', 'EGFR'],
+    'Rectal Cancer': ['X'],
+    'Gastrointestinal Stromal Tumors': ['X'],
+    'Thyroid Cancer': ['BRAF', 'EGFR'],
     'Melanoma': ['BRAF', 'ALK', 'PD-L1'],
-    'Colangiocarnoma': ['x'],
-    'Hemangioma': ['x'],
-    'Sarcoma de Kaposi': ['x'],
-    'Osteossarcoma': ['x'],
-    'Nódulo da tireóide': ['x'],
-    'Câncer de cólon': ['x'],
+    'Cholangiocarcinoma': ['X'],
+    'Hemangioma': ['X'],
+    'Kaposi Sarcoma': ['X'],
+    'Osteosarcoma': ['X'],
+    'Thyroid Nodule': ['X'],
+    'Colon Cancer': ['X']
 }
 
 opcoes_biomarcadores = {
@@ -149,43 +149,53 @@ biomarcadores_numericos = {
     'Ki-67': 'Valor numérico',
 }
 
-# Função para exibir opções de biomarcadores
-def exibir_biomarcadores(tipo_tumor):
-    biomarcadores = biomarcadores_dict.get(tipo_tumor, [])
-    resultados = {}
-    for biomarcador in biomarcadores:
-        # Incluir uma opção nula ao início da lista de opções para cada biomarcador
-        if biomarcador in biomarcadores_numericos:
-            # Para biomarcadores numéricos, você pode decidir se faz sentido ter uma opção nula
-            resultado = st.number_input(
-                f"{biomarcador}: {biomarcadores_numericos[biomarcador]}", format="%f", key=f"{biomarcador}_num")
-        else:
-            opcoes = [''] + opcoes_biomarcadores.get(
-                biomarcador, ['Positivo', 'Negativo', 'Inconclusivo'])
-            resultado = st.selectbox(
-                f"{biomarcador}:",
-                options=opcoes,
-                index=0,  # Define a opção nula como a opção padrão inicial
-                key=f"{biomarcador}_sel")
-        resultados[biomarcador] = resultado
-    return resultados
-
-# Função para filtrar os estudos clínicos com base no tipo de câncer
-def filtrar_estudos_tipo_tumor(df, tipo_tumor):
+def filtrar_estudos_tipo_tumor(df, tipo_tumor, termo_2=None):
+    colunas_esperadas = ['term_1', 'term_2', 'term_3', 'term_4', 'term_5']
+    for coluna in colunas_esperadas:
+        if coluna not in df.columns:
+            raise KeyError(f"A coluna '{coluna}' não existe no DataFrame.")
+    
     if tipo_tumor:
-        # Garante que a coluna 'Tipo_cancer' exista no DataFrame
-        if 'Tipo_cancer' not in df.columns:
-            st.error("Erro: A coluna 'Tipo_cancer' não está presente no DataFrame.")
-            return pd.DataFrame()  # Retorna um DataFrame vazio para evitar mais erros
-        else:
-            # Filtra o DataFrame baseado no tipo de câncer selecionado
-            filtered_df = df[df['Tipo_cancer'] == tipo_tumor]
-            if filtered_df.empty:
-                st.warning("Nenhum registro encontrado para o tipo de câncer selecionado.")
-            return filtered_df
+        mask = (df['term_1'].str.strip().eq(tipo_tumor) | 
+                df['term_2'].str.strip().eq(tipo_tumor) |
+                df['term_3'].str.strip().eq(tipo_tumor) |
+                df['term_4'].str.strip().eq(tipo_tumor) |
+                df['term_5'].str.strip().eq(tipo_tumor))
+        if termo_2:
+            mask &= (df['term_1'].str.strip().eq(termo_2) | 
+                     df['term_2'].str.strip().eq(termo_2) |
+                     df['term_3'].str.strip().eq(termo_2) |
+                     df['term_4'].str.strip().eq(termo_2) |
+                     df['term_5'].str.strip().eq(termo_2))
+        filtered_df = df[mask]
+        if filtered_df.empty:
+            st.warning("Nenhum registro encontrado para o tipo de câncer e termo selecionados.")
+        return filtered_df
     else:
-        return df  # Retorna o DataFrame completo se nenhum tipo de tumor for selecionado
+        return df
 
+
+## Função para filtrar os estudos clínicos com base no tipo de tumor e termo
+# def filtrar_estudos_tipo_tumor(df, tipo_tumor, termo_2=None):
+#     colunas_esperadas = ['term_1', 'term_2', 'term_3', 'term_4', 'term_5']
+#     for coluna in colunas_esperadas:
+#         if coluna not in df.columns:
+#             raise KeyError(f"A coluna '{coluna}' não existe no DataFrame.")
+    
+#     if tipo_tumor:
+#         mask = (df['term_1'].eq(tipo_tumor) | df['term_2'].eq(tipo_tumor) |
+#                 df['term_3'].eq(tipo_tumor) | df['term_4'].eq(tipo_tumor) |
+#                 df['term_5'].eq(tipo_tumor))
+#         if termo_2:
+#             mask &= (df['term_1'].eq(termo_2) | df['term_2'].eq(termo_2) |
+#                      df['term_3'].eq(termo_2) | df['term_4'].eq(termo_2) |
+#                      df['term_5'].eq(termo_2))
+#         filtered_df = df[mask]
+#         if filtered_df.empty:
+#             st.warning("Nenhum registro encontrado para o tipo de câncer e termo selecionados.")
+#         return filtered_df
+#     else:
+#         return df
 
 # Função para converter strings de listas em listas reais
 def converter_lista_string_para_lista(string_lista):
@@ -197,59 +207,64 @@ def converter_lista_string_para_lista(string_lista):
 # Função para filtrar os estudos clínicos com base no estadiamento
 def filtrar_estudos_estadiamento(df, estadiamento):
     if estadiamento:
+        # Verifica se o valor de estadiamento está correto
         estadiamento_valor = equivalencia_estadiamento.get(estadiamento, '')
+        if not estadiamento_valor:
+            print(f"Estadiamento '{estadiamento}' não encontrado no dicionário de equivalência.")
+            return df
+
+        # Converte as strings em listas
         df['Tipo_stages_lista'] = df['Tipo_stages'].apply(converter_lista_string_para_lista)
-        # Verificar o bug
-        #st.write("Tipos de câncer disponíveis no DataFrame:",df['Tipo_stages_lista'].head())
-        return df[df['Tipo_stages_lista'].apply(lambda x: estadiamento_valor in x)]
+
+        # Filtra os dados com base no estadiamento
+        filtrado = df[df['Tipo_stages_lista'].apply(lambda x: estadiamento_valor in x)]
+        
+        return filtrado
     else:
         return df
 
-# Layout da página
+# Função para exibir biomarcadores com base no tipo de tumor
+def exibir_biomarcadores(tipo_tumor):
+    if tipo_tumor in biomarcadores_dict:
+        return biomarcadores_dict[tipo_tumor]
+    else:
+        return []
+
 st.title("Interface de Estudos Clínicos")
 
-col1, col2 = st.columns([1, 2])  # Ajusta as proporções das colunas
+col1, col2 = st.columns([1, 2])
 
-def filtrar_estudos_tipo_tumor(df, tipo_tumor, termo_2=None):
-    if tipo_tumor:
-        # Cria uma máscara para verificar se algum dos termos relacionados ao tipo de câncer está presente
-        mask = df['term_1'].eq(tipo_tumor) | df['term_2'].eq(tipo_tumor) | df['term_3'].eq(tipo_tumor) | df['term_4'].eq(tipo_tumor) | df['term_5'].eq(tipo_tumor)
-        
-        if termo_2:
-            # Aplica uma segunda camada de filtragem se um termo_2 específico for selecionado
-            mask &= (df['term_1'].eq(termo_2) | df['term_2'].eq(termo_2) | df['term_3'].eq(termo_2) | df['term_4'].eq(termo_2) | df['term_5'].eq(termo_2))
-        
-        filtered_df = df[mask]
-        
-        if filtered_df.empty:
-            st.warning("Nenhum registro encontrado para o tipo de câncer e termo selecionados.")
-        
-        return filtered_df
-    else:
-        return df  # Retorna o DataFrame completo se nenhum tipo de tumor for selecionado
-
-
+with col1:
+    tipo_tumor = st.selectbox("Selecione o tipo de tumor", options=list(biomarcadores_dict.keys()))
+    estadiamento = st.selectbox("Selecione o estadiamento", options=stages_list)
+    
+    # Coletar os resultados dos biomarcadores
+    biomarcadores_resultados = exibir_biomarcadores(tipo_tumor)
 
 with col2:
     estudos_filtrados = filtrar_estudos_tipo_tumor(estudos_df, tipo_tumor)
     estudos_filtrados = filtrar_estudos_estadiamento(estudos_filtrados, estadiamento)
+    
+    # Adicionando coluna de links clicáveis no nctId
+    estudos_filtrados['nctId'] = estudos_filtrados['nctId'].apply(lambda x: f"[{x}](https://clinicaltrials.gov/study/{x})")
+    
     st.header("Estudos:")
-    with st.container():
-       st.dataframe(estudos_filtrados[['nctId', 'briefTitle']], height=400)
+    print('>verificando:', estudos_filtrados, estudos_filtrados.columns)
+
+    if 'nctId' in estudos_filtrados.columns and 'briefTitle' in estudos_filtrados.columns:
+            st.markdown(estudos_filtrados[['nctId', 'briefTitle']].to_markdown(index=False), unsafe_allow_html=True)
 
     st.header("Critérios de Inclusão/Exclusão")
-    
     st.markdown("""
                 <style>
                 div[data-testid="stTextArea"] textarea {
-                background-color: #add8e6;  /* Cor de fundo azul claro */
-                color: black;              /* Cor do texto */
+                background-color: #add8e6;
+                color: black;
                 }
                 </style>
                 """, unsafe_allow_html=True)
-    criteria_text = f"Tipo de Tumor Selecionado: {tipo_tumor}\nEstadiamento Selecionado: {estadiamento}"
+    criteria_text = "\n".join(estudos_filtrados['eligibilityCriteria'])
     st.text_area("Critérios de inclusão e exclusão:", value=criteria_text, height=150, disabled=True)
-
 
 # Parte inferior para a submissão de dados
 st.header("Submissão de Dados")
@@ -261,4 +276,3 @@ if enviar:
     st.success("Informações enviadas com sucesso!")
     if tipo_tumor:
         st.write("Resultados dos Biomarcadores:", biomarcadores_resultados)
-
