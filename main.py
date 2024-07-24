@@ -173,11 +173,19 @@ def exibir_biomarcadores(tipo_tumor):
 # Função para filtrar os estudos clínicos com base no tipo de câncer
 def filtrar_estudos_tipo_tumor(df, tipo_tumor):
     if tipo_tumor:
-        # Debug: Exibir os tipos de câncer disponíveis no DataFrame
-        #st.write("Tipos de câncer disponíveis no DataFrame:", df['Tipo_cancer'].unique())
-        return df[df['Tipo_cancer'] == tipo_tumor]
+        # Garante que a coluna 'Tipo_cancer' exista no DataFrame
+        if 'Tipo_cancer' not in df.columns:
+            st.error("Erro: A coluna 'Tipo_cancer' não está presente no DataFrame.")
+            return pd.DataFrame()  # Retorna um DataFrame vazio para evitar mais erros
+        else:
+            # Filtra o DataFrame baseado no tipo de câncer selecionado
+            filtered_df = df[df['Tipo_cancer'] == tipo_tumor]
+            if filtered_df.empty:
+                st.warning("Nenhum registro encontrado para o tipo de câncer selecionado.")
+            return filtered_df
     else:
-        return df
+        return df  # Retorna o DataFrame completo se nenhum tipo de tumor for selecionado
+
 
 # Função para converter strings de listas em listas reais
 def converter_lista_string_para_lista(string_lista):
@@ -202,20 +210,33 @@ st.title("Interface de Estudos Clínicos")
 
 col1, col2 = st.columns([1, 2])  # Ajusta as proporções das colunas
 
-with col1:
-    tipo_tumor = st.selectbox(
-        "Tipo de Tumor:", options=[None] + list(biomarcadores_dict.keys()), format_func=lambda x: '' if x is None else x)
-    estadiamento = st.selectbox("Estadiamento:", options=stages_list, format_func=lambda x: '' if x is None else x)
+def filtrar_estudos_tipo_tumor(df, tipo_tumor, termo_2=None):
     if tipo_tumor:
-        # Exibir biomarcadores com base no tipo de tumor selecionado
-        biomarcadores_resultados = exibir_biomarcadores(tipo_tumor)
+        # Cria uma máscara para verificar se algum dos termos relacionados ao tipo de câncer está presente
+        mask = df['term_1'].eq(tipo_tumor) | df['term_2'].eq(tipo_tumor) | df['term_3'].eq(tipo_tumor) | df['term_4'].eq(tipo_tumor) | df['term_5'].eq(tipo_tumor)
+        
+        if termo_2:
+            # Aplica uma segunda camada de filtragem se um termo_2 específico for selecionado
+            mask &= (df['term_1'].eq(termo_2) | df['term_2'].eq(termo_2) | df['term_3'].eq(termo_2) | df['term_4'].eq(termo_2) | df['term_5'].eq(termo_2))
+        
+        filtered_df = df[mask]
+        
+        if filtered_df.empty:
+            st.warning("Nenhum registro encontrado para o tipo de câncer e termo selecionados.")
+        
+        return filtered_df
+    else:
+        return df  # Retorna o DataFrame completo se nenhum tipo de tumor for selecionado
+
 
 
 with col2:
     estudos_filtrados = filtrar_estudos_tipo_tumor(estudos_df, tipo_tumor)
     estudos_filtrados = filtrar_estudos_estadiamento(estudos_filtrados, estadiamento)
     st.header("Estudos:")
-    st.dataframe(estudos_filtrados[['nctId','briefTitle','conditions','studyType','phases','interventions','eligibilityCriteria','ECOG_score','KPS_scores','metastasis','Estagio_final','Estagio_Inicial','Extensao_tumor_locally_advanced','Extensao_tumor_unresectable','Extensao_tumor_metastatic','Extensao_tumor_Lesions','Extensao_tumor_metastases','Câncer de Mama Triplo Negativo']], height=400)
+    with st.container():
+       st.dataframe(estudos_filtrados[['nctId', 'briefTitle']], height=400)
+
     st.header("Critérios de Inclusão/Exclusão")
     
     st.markdown("""
