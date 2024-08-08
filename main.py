@@ -22,45 +22,47 @@ equivalencia_estadiamento = {
 }
 
 # Dicionários de dados
+# Dicionários de dados
 biomarcadores_dict = {
     'Lung Neoplasms': ['BRAF', 'EGFR', 'ALK', 'ROS1', 'PD-L1', 'KRAS'],
-    'Breast Cancer': ['HER', 'Estrogen', 'Progesterone', 'Ki-67', 'ALK', 'BRCA1', 'BRCA2'],
-    'Biliary Tract Cancer': ['X'],
-    'Cancer': ['Ki-67', 'MSI', 'BRAF', 'EGFR', 'ALK', 'ROS1', 'HER', 'PD-L1'],
+    'Breast Neoplasms': ['HER', 'Estrogen', 'Progesterone', 'Ki-67', 'ALK', 'BRCA1', 'BRCA2'],
+    'Biliary Tract Neoplasms': ['X'],
+    'Neoplasms': ['Ki-67', 'MSI', 'BRAF', 'EGFR', 'ALK', 'ROS1', 'HER', 'PD-L1'],
     'Carcinoma': ['MSI', 'BRAF', 'EGFR', 'ALK', 'ROS1'],
     'Leukemia': ['X'],
-    'Metastasis': ['X'],
-    'Kahlers Disease': ['PD-L1'],
-    'Anal Cancer': ['X'],
-    'Bladder Cancer': ['PD-L1'],
-    'Non-Small Cell Lung Carcinoma': ['BRAF', 'EGFR', 'ALK', 'ROS1', 'PD-L1', 'KRAS'],
+    'Neoplasm Metastasis': ['X'],
+    'Multiple Myeloma': ['PD-L1'],
+    'Anus Neoplasms': ['X'],
+    'Urinary Bladder Neoplasms': ['PD-L1'],
+    'Carcinoma, Non-Small-Cell Lung': ['BRAF', 'EGFR', 'ALK', 'ROS1', 'PD-L1', 'KRAS'],
     'Other': ['MSI', 'PD-L1'],
-    'Cervical Cancer': ['ALK', 'PD-L1'],
+    'Uterine Cervical Neoplasms': ['ALK', 'PD-L1'],
     'Adenocarcinoma': ['PD-L1'],
-    'Head and Neck Cancer': ['EGFR'],
-    'Merkel Cell Cancer': ['PD-L1'],
-    'Pre-Leukemia': ['X'],
-    'Endometrial Cancer': ['X'],
-    'Esophageal Cancer': ['PD-L1'],
-    'Colorectal Cancer': ['MSI', 'HER'],
+    'Head and Neck Neoplasms': ['EGFR'],
+    'Carcinoma, Merkel Cell': ['PD-L1'],
+    'Preleukemia': ['X'],
+    'Endometrial Neoplasms': ['X'],
+    'Esophageal Neoplasms': ['PD-L1'],
+    'Colorectal Neoplasms': ['MSI', 'HER'],
     'Sarcoma': ['X'],
     'Myasthenia Gravis': ['X'],
     'Mesothelioma': ['X'],
     'Esophageal Squamous Cell Carcinoma': ['BRAF', 'ALK', 'EGFR', 'ROS1', 'PD-L1'],
-    'Head and Neck Squamous Cell Carcinoma': ['MSI', 'BRAF', 'EGFR', 'PD-L1'],
-    'Kidney Cancer': ['X'],
+    'Squamous Cell Carcinoma of Head and Neck': ['MSI', 'BRAF', 'EGFR', 'PD-L1'],
+    'Kidney Neoplasms': ['X'],
     'Glioblastoma': ['BRAF'],
-    'Rectal Cancer': ['X'],
+    'Rectal Neoplasms': ['X'],
     'Gastrointestinal Stromal Tumors': ['X'],
-    'Thyroid Cancer': ['BRAF', 'EGFR'],
+    'Thyroid Neoplasms': ['BRAF', 'EGFR'],
     'Melanoma': ['BRAF', 'ALK', 'PD-L1'],
     'Cholangiocarcinoma': ['X'],
     'Hemangioma': ['X'],
-    'Kaposi Sarcoma': ['X'],
+    'Sarcoma, Kaposi': ['X'],
     'Osteosarcoma': ['X'],
     'Thyroid Nodule': ['X'],
-    'Colon Cancer': ['X']
+    'Colonic Neoplasms': ['X']
 }
+
 mesh_dict = {'Lung Neoplasms': ['Carcinoma, Non-Small-Cell Lung'],
              'Biliary Tract Neoplasms': [],
              'Esophageal Neoplasms': ['Esophageal Squamous Cell Carcinoma'], 
@@ -134,7 +136,7 @@ opcoes_biomarcadores = {
     'BRCA2': ['Mutado', 'Não mutado'],
     'BRAF': ['Mutado', 'Não mutado'],
     'ROS1': ['Mutado', 'Não mutado'],
-    # Adicione mais biomarcadores e opções conforme necessário
+
 }
 
 stages_list = [
@@ -234,13 +236,16 @@ with col2:
     estudos_filtrados = filtrar_estudos_estadiamento(estudos_filtrados, estadiamento)
     estudos_filtrados = filtrar_por_ecog(estudos_filtrados, valor_ecog)
     
-    estudos_filtrados['nctId'] = estudos_filtrados['nctId'].apply(lambda x: f"[{x}](https://clinicaltrials.gov/study/{x})")
+    # Gerar links clicáveis para o clinicaltrials.gov
+    estudos_filtrados['nctId'] = estudos_filtrados['nctId'].apply(lambda x: f"<a href='https://clinicaltrials.gov/study/{x}' target='_blank'>{x}</a>")
     
     st.header("Estudos:")
     print('>verificando:', estudos_filtrados, estudos_filtrados.columns)
 
     if 'nctId' in estudos_filtrados.columns and 'briefTitle' in estudos_filtrados.columns:
-        st.dataframe(estudos_filtrados[['nctId', 'briefTitle']])
+        # Criar uma tabela HTML
+        tabela_html = estudos_filtrados[['nctId', 'briefTitle']].to_html(escape=False, index=False)
+        st.markdown(tabela_html, unsafe_allow_html=True)
 
     st.header("Critérios de Inclusão/Exclusão")
     st.markdown("""
@@ -251,6 +256,7 @@ with col2:
                 }
                 </style>
                 """, unsafe_allow_html=True)
+    
     criteria_text = "\n".join(estudos_filtrados['eligibilityCriteria'])
     st.text_area("Critérios de inclusão e exclusão:", value=criteria_text, height=150, disabled=True)
 
