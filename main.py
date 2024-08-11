@@ -16,51 +16,82 @@ estudos_df = pd.read_csv(file_path)
 
 # Equivalência entre algarismos romanos e os valores no dataset
 equivalencia_estadiamento = {
-    'I': 'I',
-    'II': 'II',
-    'III': 'III'
+    '' :['[]'],
+    'I': ['I', 'IA', 'IB', 'IC'],
+    'II': ['II', 'IIA', 'IIB', 'IIC'],
+    'III': ['III', 'IIIA', 'IIIB', 'IIIC'],
+    'IV': ['IV', 'IVA', 'IVB', 'IVC'],
+    'T': ['Tx', 'T0', 'Ta', 'Tis', 'Tis(DCIS)', 'Tis(LAMN)', 'Tis(Paget)', 'T1', 'T1mi', 'T1a', 'T1a1', 'T1a2', 'T1b', 'T1b1', 'T1b2', 'T1b3', 'T1c', 'T1c1', 'T1c2', 'T1c3', 'T1d', 'T2', 'T2a', 'T2a1', 'T2a2', 'T2b', 'T2c', 'T2d', 'T3', 'T3a', 'T3b', 'T3c', 'T3d', 'T3e', 'T4', 'T4a', 'T4b', 'T4c', 'T4d', 'T4e'],
+    'N': ['Nx', 'N0', 'N0(sn)', 'N0a', 'N0a(sn)', 'N0b', 'N0b(sn)', 'N0(i+)', 'N0(mol+)', 'N1', 'N1(sn)', 'N1mi', 'N1mi(sn)', 'N1a', 'N1a(sn)', 'N1b', 'N1b(sn)', 'N1c', 'N1c(sn)', 'N2', 'N2mi', 'N2a', 'N2b', 'N2c', 'N3', 'N3a', 'N3b', 'N3c'],
+    'M': ['Mx', 'M0', 'M0(i+)', 'M1', 'M1a', 'M1a(0)', 'M1a(1)', 'M1b', 'M1b(0)', 'M1b(1)', 'M1c', 'M1c(0)', 'M1c(1)', 'M1d', 'M1d(0)', 'M1d(1)'],
+    'ypT': ['ypT2-4a'],
+    'ypN': ['ypN+'],
+    'pT': ['pT2-4a'],
+    'pN': ['pN+']
 }
-
 # Dicionários de dados
 # Dicionários de dados
 biomarcadores_dict = {
-    'Lung Neoplasms': ['BRAF', 'EGFR', 'ALK', 'ROS1', 'PD-L1', 'KRAS'],
-    'Breast Neoplasms': ['HER', 'Estrogen', 'Progesterone', 'Ki-67', 'ALK', 'BRCA1', 'BRCA2'],
-    'Biliary Tract Neoplasms': ['X'],
-    'Neoplasms': ['Ki-67', 'MSI', 'BRAF', 'EGFR', 'ALK', 'ROS1', 'HER', 'PD-L1'],
-    'Carcinoma': ['MSI', 'BRAF', 'EGFR', 'ALK', 'ROS1'],
-    'Leukemia': ['X'],
-    'Neoplasm Metastasis': ['X'],
-    'Multiple Myeloma': ['PD-L1'],
-    'Anus Neoplasms': ['X'],
-    'Urinary Bladder Neoplasms': ['PD-L1'],
-    'Carcinoma, Non-Small-Cell Lung': ['BRAF', 'EGFR', 'ALK', 'ROS1', 'PD-L1', 'KRAS'],
-    'Other': ['MSI', 'PD-L1'],
-    'Uterine Cervical Neoplasms': ['ALK', 'PD-L1'],
-    'Adenocarcinoma': ['PD-L1'],
-    'Head and Neck Neoplasms': ['EGFR'],
-    'Carcinoma, Merkel Cell': ['PD-L1'],
-    'Preleukemia': ['X'],
-    'Endometrial Neoplasms': ['X'],
-    'Esophageal Neoplasms': ['PD-L1'],
-    'Colorectal Neoplasms': ['MSI', 'HER'],
-    'Sarcoma': ['X'],
-    'Myasthenia Gravis': ['X'],
-    'Mesothelioma': ['X'],
-    'Esophageal Squamous Cell Carcinoma': ['BRAF', 'ALK', 'EGFR', 'ROS1', 'PD-L1'],
-    'Squamous Cell Carcinoma of Head and Neck': ['MSI', 'BRAF', 'EGFR', 'PD-L1'],
-    'Kidney Neoplasms': ['X'],
-    'Glioblastoma': ['BRAF'],
-    'Rectal Neoplasms': ['X'],
-    'Gastrointestinal Stromal Tumors': ['X'],
-    'Thyroid Neoplasms': ['BRAF', 'EGFR'],
-    'Melanoma': ['BRAF', 'ALK', 'PD-L1'],
-    'Cholangiocarcinoma': ['X'],
-    'Hemangioma': ['X'],
-    'Sarcoma, Kaposi': ['X'],
-    'Osteosarcoma': ['X'],
-    'Thyroid Nodule': ['X'],
-    'Colonic Neoplasms': ['X']
+    'Adenocarcinoma':['HER','PD-L1'], 
+    'Anus Neoplasms':['X'], 
+    'Anxiety Disorders':['X'], 
+    'Biliary Tract Neoplasms':['X'], 
+    'Breast Neoplasms':['Ki-67' ,'EGFR','ALK','BRCA1', 'BRCA2','HER','PD-L1','Progesterone','Estrogen'], 
+    'Cancer Pain':['X'], 
+    'Carcinoma':['MSI','BRAF','EGFR','ALK','ROS1','PD-L1'], 
+    'Carcinoma, Merkel Cell':['PD-L1'], 
+    'Carcinoma, Non-Small-Cell Lung':['BRAF','KRAS','EGFR','ALK','ROS1','HER','PD-L1'], 
+    'Carcinoma, Squamous Cell':['PD-L1'], 
+    'Cardiotoxicity':['X'], 
+    'Cardiovascular Diseases':['X'], 
+    'Cholangiocarcinoma':['X'], 
+    'Colonic Neoplasms':['X'], 
+    'Colorectal Neoplasms':['MSI','HER'], 
+    'Endometrial Neoplasms':['X'], 
+    'Epilepsy':['X'], 
+    'Epstein-Barr Virus Infections':['X'], 
+    'Esophageal Neoplasms':['PD-L1'], 
+    'Esophageal Squamous Cell Carcinoma':['BRAF','EGFR','ALK','ROS1','PD-L1'], 
+    'Gastrointestinal Stromal Tumors':['X'], 
+    'Glioblastoma':['BRAF'], 
+    'Head and Neck Neoplasms':['EGFR'], 
+    'Hemangioma':['X'], 
+    'Hematologic Neoplasms':['X'], 
+    'Infections':['X'], 
+    'Kidney Neoplasms':['X'], 
+    'Leukemia':['EGFR'], 
+    'Lung Neoplasms': ['BRAF','KRAS','EGFR','ALK','ROS1','HER','PD-L1'], 
+    'Lymphoma':['EGFR','PD-L1'], 
+    'Melanoma':['BRAF','ALK','PD-L1'], 
+    'Mesothelioma':['X'], 
+    'Mouth Neoplasms':['X'], 
+    'Mucositis':['X'], 
+    'Multiple Myeloma':['EGFR','PD-L1'], 
+    'Myasthenia Gravis':['X'], 
+    'Neoplasm Metastasis':['X'], 
+    'Neoplasms':['Ki-67','MSI','BRAF','EGFR','ALK','ROS1','HER','PD-L1'], 
+    'Osteosarcoma':['X'], 
+    'Papillomavirus Infections':['X'], 
+    'Polycythemia Vera':['X'], 
+    'Postoperative Complications':['X'], 
+    'Preleukemia':['X'], 
+    'Primary Myelofibrosis':['X'], 
+    'Primary Ovarian Insufficiency':['X'], 
+    'Prostatic Neoplasms':['EGFR','ALK','Estrogen'], 
+    'Rectal Neoplasms':['X'], 
+    'Sarcoma':['X'], 
+    'Sarcoma, Kaposi':['X'], 
+    'Squamous Cell Carcinoma of Head and Neck':['MSI','BRAF','EGFR','PD-L1'], 
+    'Stomach Neoplasms':['HER'], 
+    'Thromboembolism':['X'], 
+    'Thyroid Diseases':['X'], 
+    'Thyroid Neoplasms':['BRAF','EGFR'], 
+    'Thyroid Nodule':['X'], 
+    'Urinary Bladder Neoplasms':['PD-L1'], 
+    'Uterine Cervical Neoplasms':['ALK','PD-L1'], 
+    'Ventricular Dysfunction':['HER'], 
+    'Virus Diseases':['X']
+
 }
 
 mesh_dict = {'Lung Neoplasms': ['Carcinoma, Non-Small-Cell Lung'],
@@ -136,7 +167,8 @@ opcoes_biomarcadores = {
     'BRCA2': ['Mutado', 'Não mutado'],
     'BRAF': ['Mutado', 'Não mutado'],
     'ROS1': ['Mutado', 'Não mutado'],
-
+    'Ki-67': [''],
+    'EGFR': ['Mutado', 'Não mutado'],
 }
 
 stages_list = [
@@ -173,27 +205,31 @@ def filtrar_estudos_tipo_tumor(df, tipo_tumor, termo_2=None):
         return filtered_df
     else:
         return df
-
 def converter_lista_string_para_lista(string_lista):
     try:
         return ast.literal_eval(string_lista)
     except (ValueError, SyntaxError):
         return []
 
-# Função para filtrar os estudos clínicos com base no estadiamento
 def filtrar_estudos_estadiamento(df, estadiamento):
     if estadiamento:
-        estadiamento_valor = equivalencia_estadiamento.get(estadiamento, '')
+        estadiamento_valor = equivalencia_estadiamento.get(estadiamento, [])
         if not estadiamento_valor:
             print(f"Estadiamento '{estadiamento}' não encontrado no dicionário de equivalência.")
             return df
 
         df['Tipo_stages_lista'] = df['Tipo_stages'].apply(converter_lista_string_para_lista)
+        filtrado = df[df['Tipo_stages_lista'].apply(lambda x: any(item in estadiamento_valor for item in x))]
 
-        filtrado = df[df['Tipo_stages_lista'].apply(lambda x: estadiamento_valor in x)]
+        # Verificar conteúdo do filtrado
+        print(f"Total de registros encontrados: {len(filtrado)}")
+
+        if filtrado.empty:
+            st.warning("Nenhum registro encontrado para o estadiamento selecionado.")
         return filtrado
     else:
         return df
+
 
 def filtrar_por_ecog(df, valor_ecog):
     if valor_ecog:
@@ -211,6 +247,7 @@ def filtrar_por_ecog(df, valor_ecog):
         return df
 
 # Função para exibir biomarcadores com base no tipo de tumor
+# Função para exibir biomarcadores com base no tipo de tumor
 def exibir_biomarcadores_e_opcoes(tipo_tumor):
     biomarcadores = biomarcadores_dict.get(tipo_tumor, [])
     selecoes = {}
@@ -219,18 +256,43 @@ def exibir_biomarcadores_e_opcoes(tipo_tumor):
         selecoes[biomarcador] = st.selectbox(f'Selecione a opção para {biomarcador}', options=opcoes)
     return selecoes
 
+
+
 st.title("Interface de Estudos Clínicos")
 
 col1, col2 = st.columns([1, 2])
 
 with col1:
     tipo_tumor = st.selectbox("Selecione o tipo de tumor", options=list(biomarcadores_dict.keys()))
-    estadiamento = st.selectbox("Selecione o estadiamento", options=stages_list)
+    estadiamento = st.selectbox("Selecione o estadiamento", options=equivalencia_estadiamento)
     valor_ecog = st.text_input('Selecione o ECOG:')
-    
-    if tipo_tumor:
-        biomarcadores_resultados = exibir_biomarcadores_e_opcoes(tipo_tumor)
+    # Mostrar biomarcadores e opções se não for ['X']
+    if biomarcadores_dict.get(tipo_tumor) != ['X']:
+         biomarcadores_resultados = exibir_biomarcadores_e_opcoes(tipo_tumor)
+    else:
+         st.warning("Nenhum biomarcador disponível para seleção.")
+    #if tipo_tumor:
+       # biomarcadores_resultados = exibir_biomarcadores_e_opcoes(tipo_tumor)
+    # Aplicar filtros ao DataFrame
+    # Inicializar `selecoes` como um dicionário vazio
+    selecoes = {}
 
+    if selecoes:
+        # Cria uma máscara para filtrar o DataFrame
+        mask = pd.Series([True] * len(estudos_df))
+        
+        for biomarcador, opcoes_selecionadas in selecoes.items():
+            if opcoes_selecionadas:
+                # Aplica filtro para cada biomarcador
+                biomarcador_mask = (estudos_df['Biomarcador'] == biomarcador) & (estudos_df['Opção'].isin(opcoes_selecionadas))
+                mask &= biomarcador_mask
+        
+        # Aplica a máscara ao DataFrame
+        estudo_filtrado = estudos_df[mask]
+        st.write("Dados filtrados:")
+        st.write(estudo_filtrado)
+    else:
+        st.write("Nenhum filtro aplicado.")
 with col2:
     estudos_filtrados = filtrar_estudos_tipo_tumor(estudos_df, tipo_tumor)
     estudos_filtrados = filtrar_estudos_estadiamento(estudos_filtrados, estadiamento)
