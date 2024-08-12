@@ -33,64 +33,64 @@ equivalencia_estadiamento = {
 # Dicionários de dados
 biomarcadores_dict = {
     'Adenocarcinoma':['HER','PD-L1'], 
-    'Anus Neoplasms':['X'], 
-    'Anxiety Disorders':['X'], 
-    'Biliary Tract Neoplasms':['X'], 
+    'Anus Neoplasms':[], 
+    'Anxiety Disorders':[], 
+    'Biliary Tract Neoplasms':[], 
     'Breast Neoplasms':['Ki-67' ,'EGFR','ALK','BRCA1', 'BRCA2','HER','PD-L1','Progesterone','Estrogen'], 
-    'Cancer Pain':['X'], 
+    'Cancer Pain':[], 
     'Carcinoma':['MSI','BRAF','EGFR','ALK','ROS1','PD-L1'], 
     'Carcinoma, Merkel Cell':['PD-L1'], 
     'Carcinoma, Non-Small-Cell Lung':['BRAF','KRAS','EGFR','ALK','ROS1','HER','PD-L1'], 
     'Carcinoma, Squamous Cell':['PD-L1'], 
-    'Cardiotoxicity':['X'], 
-    'Cardiovascular Diseases':['X'], 
-    'Cholangiocarcinoma':['X'], 
-    'Colonic Neoplasms':['X'], 
+    'Cardiotoxicity':[], 
+    'Cardiovascular Diseases':[], 
+    'Cholangiocarcinoma':[], 
+    'Colonic Neoplasms':[], 
     'Colorectal Neoplasms':['MSI','HER'], 
-    'Endometrial Neoplasms':['X'], 
-    'Epilepsy':['X'], 
-    'Epstein-Barr Virus Infections':['X'], 
+    'Endometrial Neoplasms':[], 
+    'Epilepsy':[], 
+    'Epstein-Barr Virus Infections':[], 
     'Esophageal Neoplasms':['PD-L1'], 
     'Esophageal Squamous Cell Carcinoma':['BRAF','EGFR','ALK','ROS1','PD-L1'], 
-    'Gastrointestinal Stromal Tumors':['X'], 
+    'Gastrointestinal Stromal Tumors':[], 
     'Glioblastoma':['BRAF'], 
     'Head and Neck Neoplasms':['EGFR'], 
-    'Hemangioma':['X'], 
-    'Hematologic Neoplasms':['X'], 
-    'Infections':['X'], 
-    'Kidney Neoplasms':['X'], 
+    'Hemangioma':[], 
+    'Hematologic Neoplasms':[], 
+    'Infections':[], 
+    'Kidney Neoplasms':[], 
     'Leukemia':['EGFR'], 
     'Lung Neoplasms': ['BRAF','KRAS','EGFR','ALK','ROS1','HER','PD-L1'], 
     'Lymphoma':['EGFR','PD-L1'], 
     'Melanoma':['BRAF','ALK','PD-L1'], 
-    'Mesothelioma':['X'], 
-    'Mouth Neoplasms':['X'], 
-    'Mucositis':['X'], 
+    'Mesothelioma':[], 
+    'Mouth Neoplasms':[], 
+    'Mucositis':[], 
     'Multiple Myeloma':['EGFR','PD-L1'], 
-    'Myasthenia Gravis':['X'], 
-    'Neoplasm Metastasis':['X'], 
+    'Myasthenia Gravis':[], 
+    'Neoplasm Metastasis':[], 
     'Neoplasms':['Ki-67','MSI','BRAF','EGFR','ALK','ROS1','HER','PD-L1'], 
-    'Osteosarcoma':['X'], 
-    'Papillomavirus Infections':['X'], 
-    'Polycythemia Vera':['X'], 
-    'Postoperative Complications':['X'], 
-    'Preleukemia':['X'], 
-    'Primary Myelofibrosis':['X'], 
-    'Primary Ovarian Insufficiency':['X'], 
+    'Osteosarcoma':[], 
+    'Papillomavirus Infections':[], 
+    'Polycythemia Vera':[], 
+    'Postoperative Complications':[], 
+    'Preleukemia':[], 
+    'Primary Myelofibrosis':[], 
+    'Primary Ovarian Insufficiency':[], 
     'Prostatic Neoplasms':['EGFR','ALK','Estrogen'], 
-    'Rectal Neoplasms':['X'], 
-    'Sarcoma':['X'], 
-    'Sarcoma, Kaposi':['X'], 
+    'Rectal Neoplasms':[], 
+    'Sarcoma':[], 
+    'Sarcoma, Kaposi':[], 
     'Squamous Cell Carcinoma of Head and Neck':['MSI','BRAF','EGFR','PD-L1'], 
     'Stomach Neoplasms':['HER'], 
-    'Thromboembolism':['X'], 
-    'Thyroid Diseases':['X'], 
+    'Thromboembolism':[], 
+    'Thyroid Diseases':[], 
     'Thyroid Neoplasms':['BRAF','EGFR'], 
-    'Thyroid Nodule':['X'], 
+    'Thyroid Nodule':[], 
     'Urinary Bladder Neoplasms':['PD-L1'], 
     'Uterine Cervical Neoplasms':['ALK','PD-L1'], 
     'Ventricular Dysfunction':['HER'], 
-    'Virus Diseases':['X']
+    'Virus Diseases':[]
 
 }
 
@@ -171,6 +171,19 @@ opcoes_biomarcadores = {
     'EGFR': ['Mutado', 'Não mutado'],
 }
 
+# dicionário mapeando o nome do biomarcador na interface para a coluna em que os valores se encontram no dataframe
+# TODO: falta escrever todos os outros mapeamentos.
+# esse processo poderia ser automatizado e retirado diretamente da base de dados se os nomes das colunas estivessem padronizados
+bio_to_column = {
+    'HER': 'Tipo_Her',
+    'Estrogen': 'tipo_estrogen',
+    'Progesterone': 'tipo_progesterone',
+    'KRAS': 'BiomarkKRAS',
+    'PD-L1': 'Tipo_PD_L1',
+    'MSI': 'Tipo_MSI',
+    'ALK': 'Tipo_ALK',
+}
+
 stages_list = [
     ' ', 'I', 'IA', 'IB', 'IC', 'II', 'IIA', 'IIB', 'IIC', 'III', 'IIIA', 'IIIB', 'IIIC', 'IV', 'IVA', 'IVB', 'IVC',
     'Tx', 'T0', 'Ta', 'Tis', 'Tis(DCIS)', 'Tis(LAMN)', 'Tis(Paget)', 'T1', 'T1mi', 'T1a', 'T1a1', 'T1a2', 'T1b', 'T1b1', 'T1b2', 'T1b3', 'T1c', 'T1c1', 'T1c2', 'T1c3', 'T1d',
@@ -246,14 +259,17 @@ def filtrar_por_ecog(df, valor_ecog):
     else:
         return df
 
-# Função para exibir biomarcadores com base no tipo de tumor
+
 # Função para exibir biomarcadores com base no tipo de tumor
 def exibir_biomarcadores_e_opcoes(tipo_tumor):
     biomarcadores = biomarcadores_dict.get(tipo_tumor, [])
     selecoes = {}
     for biomarcador in biomarcadores:
-        opcoes = opcoes_biomarcadores.get(biomarcador, [])
-        selecoes[biomarcador] = st.selectbox(f'Selecione a opção para {biomarcador}', options=opcoes)
+        # opcoes = opcoes_biomarcadores.get(biomarcador, [])
+        if biomarcador in bio_to_column:
+            opcoes = estudos_df[bio_to_column[biomarcador]].unique()
+            selecoes[biomarcador] = st.selectbox(f'Selecione a opção para {biomarcador}', index=None, options=opcoes)
+        
     return selecoes
 
 
@@ -263,14 +279,17 @@ st.title("Interface de Estudos Clínicos")
 col1, col2 = st.columns([1, 2])
 
 with col1:
-    tipo_tumor = st.selectbox("Selecione o tipo de tumor", options=list(biomarcadores_dict.keys()))
-    estadiamento = st.selectbox("Selecione o estadiamento", options=equivalencia_estadiamento)
+    tipo_tumor = st.selectbox("Selecione o tipo de tumor", index=None, options=list(biomarcadores_dict.keys()))
+    estadiamento = st.selectbox("Selecione o estadiamento", index=None, options=equivalencia_estadiamento)
     valor_ecog = st.text_input('Selecione o ECOG:')
-    # Mostrar biomarcadores e opções se não for ['X']
-    if biomarcadores_dict.get(tipo_tumor) != ['X']:
-         biomarcadores_resultados = exibir_biomarcadores_e_opcoes(tipo_tumor)
+
+    # seletores de biomarcadores
+    biomarcadores_resultados = None
+
+    if tipo_tumor in biomarcadores_dict and len(biomarcadores_dict[tipo_tumor]) > 0:
+        biomarcadores_resultados = exibir_biomarcadores_e_opcoes(tipo_tumor)
     else:
-         st.warning("Nenhum biomarcador disponível para seleção.")
+        st.warning("Nenhum biomarcador disponível para seleção.")
     #if tipo_tumor:
        # biomarcadores_resultados = exibir_biomarcadores_e_opcoes(tipo_tumor)
     # Aplicar filtros ao DataFrame
@@ -297,6 +316,12 @@ with col2:
     estudos_filtrados = filtrar_estudos_tipo_tumor(estudos_df, tipo_tumor)
     estudos_filtrados = filtrar_estudos_estadiamento(estudos_filtrados, estadiamento)
     estudos_filtrados = filtrar_por_ecog(estudos_filtrados, valor_ecog)
+
+    if biomarcadores_resultados:
+        for biomarcador, valor in biomarcadores_resultados.items():
+            if biomarcador in bio_to_column and valor:
+                estudos_filtrados = estudos_filtrados[estudos_filtrados[bio_to_column[biomarcador]] == valor]
+                
     
     # Gerar links clicáveis para o clinicaltrials.gov
     estudos_filtrados['nctId'] = estudos_filtrados['nctId'].apply(lambda x: f"<a href='https://clinicaltrials.gov/study/{x}' target='_blank'>{x}</a>")
