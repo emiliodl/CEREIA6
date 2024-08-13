@@ -3,19 +3,15 @@ import pandas as pd
 import ast
 from dicionarios import equivalencia_estadiamento, bio_to_column, biomarcadores_dict, opcoes_biomarcadores, mesh_dict
 
-# Função para aplicar CSS personalizado
 def local_css(file_name):
     with open(file_name, "r") as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# Carregue o CSS personalizado
 local_css("style.css")
 
-# Carregar o dataset dos estudos clínicos
-file_path = 'df_final_matches_tipo_cancer_atualizado.csv'  # Substitua pelo caminho do seu arquivo
+file_path = 'df_final_matches_tipo_cancer_atualizado.csv'  
 estudos_df = pd.read_csv(file_path)
 
-# Funções de filtragem
 def filtrar_estudos_tipo_tumor(df, tipo_tumor, termo_2=None):
     colunas_esperadas = ['term_1', 'term_2', 'term_3', 'term_4', 'term_5']
     for coluna in colunas_esperadas:
@@ -56,7 +52,6 @@ def filtrar_estudos_estadiamento(df, estadiamento):
         df['Tipo_stages_lista'] = df['Tipo_stages'].apply(converter_lista_string_para_lista)
         filtrado = df[df['Tipo_stages_lista'].apply(lambda x: any(item in estadiamento_valor for item in x))]
 
-        # Verificar conteúdo do filtrado
         print(f"Total de registros encontrados: {len(filtrado)}")
 
         if filtrado.empty:
@@ -85,7 +80,7 @@ def filtrar_estudos_por_biomarcadores(df, selecoes_biomarcadores):
     mask = pd.Series([True] * len(df))
     
     for biomarcador, valor in selecoes_biomarcadores.items():
-        if valor:  # Certifique-se de que o valor não está vazio
+        if valor:  
             if biomarcador == 'HER':
                 mask &= df['Tipo_Her'] == valor
             elif biomarcador == 'Estrogen':
@@ -115,8 +110,6 @@ def filtrar_estudos_por_biomarcadores(df, selecoes_biomarcadores):
     
     return df[mask]
 
-# Função para exibir biomarcadores com base no tipo de tumor
-# Função para exibir biomarcadores com base no tipo de tumor
 def exibir_biomarcadores_e_opcoes(tipo_tumor):
     biomarcadores = biomarcadores_dict.get(tipo_tumor, [])
     selecoes = {}
@@ -166,7 +159,6 @@ with col2:
     print('>verificando:', estudos_filtrados, estudos_filtrados.columns)
 
     if 'nctId' in estudos_filtrados.columns and 'briefTitle' in estudos_filtrados.columns:
-        # Criar uma tabela HTML
         tabela_html = estudos_filtrados[['nctId', 'briefTitle']].to_html(escape=False, index=False)
         st.markdown(tabela_html, unsafe_allow_html=True)
 
@@ -183,7 +175,6 @@ with col2:
     criteria_text = "\n".join(estudos_filtrados['eligibilityCriteria'])
     st.text_area("Critérios de inclusão e exclusão:", value=criteria_text, height=150, disabled=True)
 
-# Parte inferior para a submissão de dados
 st.header("Submissão de Dados")
 carteirinha = st.text_input("Carteirinha:")
 medico = st.text_input("Médico:")
