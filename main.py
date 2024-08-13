@@ -36,6 +36,7 @@ def filtrar_estudos_tipo_tumor(df, tipo_tumor, termo_2=None):
         return filtered_df
     else:
         return df
+
 def converter_lista_string_para_lista(string_lista):
     try:
         return ast.literal_eval(string_lista)
@@ -60,7 +61,6 @@ def filtrar_estudos_estadiamento(df, estadiamento):
     else:
         return df
 
-
 def filtrar_por_ecog(df, valor_ecog):
     if valor_ecog:
         if 'Tem ECOG' not in df.columns:
@@ -77,48 +77,28 @@ def filtrar_por_ecog(df, valor_ecog):
         return df
 
 def filtrar_estudos_por_biomarcadores(df, selecoes_biomarcadores):
-    mask = pd.Series([True] * len(df))
+    mask = pd.Series([True] * len(df), index=df.index)  # Alinhar o índice do mask com o índice do DataFrame
     
     for biomarcador, valor in selecoes_biomarcadores.items():
-        if valor:  
-            if biomarcador == 'HER':
-                mask &= df['Tipo_Her'] == valor
-            elif biomarcador == 'Estrogen':
-                mask &= df['tipo_estrogen'] == valor
-            elif biomarcador == 'Progesterone':
-                mask &= df['tipo_progesterone'] == valor
-            elif biomarcador == 'KRAS':
-                mask &= df['BiomarkKRAS'] == valor
-            elif biomarcador == 'PD-L1':
-                mask &= df['Tipo_PD_L1'] == valor
-            elif biomarcador == 'MSI':
-                mask &= df['Tipo_MSI'] == valor
-            elif biomarcador == 'ALK':
-                mask &= df['Tipo_ALK'] == valor
-            elif biomarcador == 'BRCA1':
-                mask &= df['Tipo_BRCA1_BRCA2'].str.contains('BRCA1', na=False) & (df['Tipo_BRCA1_BRCA2'] == valor)
-            elif biomarcador == 'BRCA2':
-                mask &= df['Tipo_BRCA1_BRCA2'].str.contains('BRCA2', na=False) & (df['Tipo_BRCA1_BRCA2'] == valor)
-            elif biomarcador == 'BRAF':
-                mask &= df['Tipo_BRAF'] == valor
-            elif biomarcador == 'ROS1':
-                mask &= df['Tipo_ROS1'] == valor
-            elif biomarcador == 'Ki-67':
-                mask &= df['Tipo_de_resultado_Ki67'] == valor
-            elif biomarcador == 'EGFR':
-                mask &= df['Tipo_EGFR'] == valor
-    
+        if valor:  # Aplica o filtro apenas se o valor não estiver vazio
+            coluna = bio_to_column.get(biomarcador)
+            if coluna:
+                # Verifique se a coluna contém valores nulos e trate-os
+                if coluna in df.columns:
+                    df[coluna] = df[coluna].fillna('')
+                    mask &= (df[coluna] == valor)
+                    print(f"Aplicando filtro: {coluna} == {valor}")
+
+    print(f"Total de registros após filtragem: {mask.sum()} de {len(df)}")
     return df[mask]
 
 def exibir_biomarcadores_e_opcoes(tipo_tumor):
     biomarcadores = biomarcadores_dict.get(tipo_tumor, [])
     selecoes = {}
     for biomarcador in biomarcadores:
-        opcoes = opcoes_biomarcadores.get(biomarcador, [])
+        opcoes = [""] + opcoes_biomarcadores.get(biomarcador, [])  # Adiciona uma opção vazia no início
         selecoes[biomarcador] = st.selectbox(f'Selecione a opção para {biomarcador}', options=opcoes)
     return selecoes
-
-
 
 st.title("Interface de Estudos Clínicos")
 
@@ -126,54 +106,34 @@ col1, col2 = st.columns([1, 2])
 
 with col1:
     tipo_tumor = st.selectbox("Selecione o tipo de tumor", options=list(biomarcadores_dict.keys()))
-    estadiamento = st.selectbox("Selecione o estadiamento", options=equivalencia_estadiamento)
+    estadiamento = st.selectbox("Selecione o estadiamento", options=[""] + list(equivalencia_estadiamento.keys()))
     valor_ecog = st.text_input('Selecione o ECOG:')
+    
+    # Exibe as opções de biomarcadores com base no tipo de tumor selecionado
     if biomarcadores_dict.get(tipo_tumor) != ['X']:
-         biomarcadores_resultados = exibir_biomarcadores_e_opcoes(tipo_tumor)
+        biomarcadores_resultados = exibir_biomarcadores_e_opcoes(tipo_tumor)
     else:
-         st.warning("Nenhum biomarcador disponível para seleção.")
-    selecoes = {}
-
-    if selecoes:
-        mask = pd.Series([True] * len(estudos_df))
-        
-        for biomarcador, opcoes_selecionadas in selecoes.items():
-            if opcoes_selecionadas:
-                biomarcador_mask = (estudos_df['Biomarcador'] == biomarcador) & (estudos_df['Opção'].isin(opcoes_selecionadas))
-                mask &= biomarcador_mask
-        
-        estudo_filtrado = estudos_df[mask]
-        st.write("Dados filtrados:")
-        st.write(estudo_filtrado)
-    else:
-        st.write("Nenhum filtro aplicado.")
+        st.warning("Nenhum biomarcador disponível para seleção.")
+    
 with col2:
+    # Filtra os estudos na ordem correta
     estudos_filtrados = filtrar_estudos_tipo_tumor(estudos_df, tipo_tumor)
     estudos_filtrados = filtrar_estudos_estadiamento(estudos_filtrados, estadiamento)
     estudos_filtrados = filtrar_por_ecog(estudos_filtrados, valor_ecog)
+    estudos_filtrados = filtrar_estudos_por_biomarcadores(estudos_filtrados, biomarcadores_resultados)
     
     # Gerar links clicáveis para o clinicaltrials.gov
-    estudos_filtrados['nctId'] = estudos_filtrados['nctId'].apply(lambda x: f"<a href='https://clinicaltrials.gov/study/{x}' target='_blank'>{x}</a>")
+    if not estudos_filtrados.empty:
+        estudos_filtrados['nctId'] = estudos_filtrados['nctId'].apply(lambda x: f"<a href='https://clinicaltrials.gov/study/{x}' target='_blank'>{x}</a>")
     
-    st.header("Estudos:")
-    print('>verificando:', estudos_filtrados, estudos_filtrados.columns)
-
-    if 'nctId' in estudos_filtrados.columns and 'briefTitle' in estudos_filtrados.columns:
-        tabela_html = estudos_filtrados[['nctId', 'briefTitle']].to_html(escape=False, index=False)
-        st.markdown(tabela_html, unsafe_allow_html=True)
-
-    st.header("Critérios de Inclusão/Exclusão")
-    st.markdown("""
-                <style>
-                div[data-testid="stTextArea"] textarea {
-                background-color: #add8e6;
-                color: black;
-                }
-                </style>
-                """, unsafe_allow_html=True)
+        st.header("Estudos:")
+        st.markdown(estudos_filtrados[['nctId', 'briefTitle']].to_html(escape=False, index=False), unsafe_allow_html=True)
     
-    criteria_text = "\n".join(estudos_filtrados['eligibilityCriteria'])
-    st.text_area("Critérios de inclusão e exclusão:", value=criteria_text, height=150, disabled=True)
+        st.header("Critérios de Inclusão/Exclusão")
+        criteria_text = "\n".join(estudos_filtrados['eligibilityCriteria'])
+        st.text_area("Critérios de inclusão e exclusão:", value=criteria_text, height=150, disabled=True)
+    else:
+        st.warning("Nenhum estudo encontrado com os critérios selecionados.")
 
 st.header("Submissão de Dados")
 carteirinha = st.text_input("Carteirinha:")

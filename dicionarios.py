@@ -136,21 +136,20 @@ mesh_dict = {'Lung Neoplasms': ['Carcinoma, Non-Small-Cell Lung'],
              'Rectal Neoplasms': [], 
              'Gastrointestinal Stromal Tumors': []}
 
-
 opcoes_biomarcadores = {
-    'HER': ['Positivo', 'Negativo', 'Neutro'],
-    'Estrogen': ['Positivo', 'Negativo'],
-    'Progesterone': ['Positivo', 'Negativo'],
-    'KRAS': ['Mutado', 'Não mutado'],
-    'PD-L1': ['Positivo', 'Negativo'],
-    'MSI': ['Alto', 'Baixo'],
-    'ALK': ['Mutado', 'Não mutado'],
-    'BRCA1': ['Mutado', 'Não mutado'],
-    'BRCA2': ['Mutado', 'Não mutado'],
-    'BRAF': ['Mutado', 'Não mutado'],
-    'ROS1': ['Mutado', 'Não mutado'],
+    'HER': ['positivo', 'negativo', 'neutro'],
+    'Estrogen': ['positivo', 'negativo'],
+    'Progesterone': ['positivo', 'negativo'],
+    'KRAS': ['mutado', 'não-mutado'],
+    'PD-L1': ['positivo', 'negativo'],
+    'MSI': ['alto', 'baixo'],
+    'ALK': ['mutado', 'não-mutado'],
+    'BRCA1': ['mutado', 'não-mutado'],
+    'BRCA2': ['mutado', 'não-mutado'],
+    'BRAF': ['mutado', 'não-mutado'],
+    'ROS1': ['mutado', 'não-mutado'],
     'Ki-67': [''],
-    'EGFR': ['Mutado', 'Não mutado'],
+    'EGFR': ['mutado', 'não-mutado'],
 }
 
 bio_to_column = {
