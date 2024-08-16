@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import ast
+import urllib.parse
 from dicionarios import equivalencia_estadiamento, bio_to_column, biomarcadores_dict, opcoes_biomarcadores, mesh_dict
 
 def local_css(file_name):
@@ -100,6 +101,36 @@ def exibir_biomarcadores_e_opcoes(tipo_tumor):
         selecoes[biomarcador] = st.selectbox(f'Selecione a opção para {biomarcador}', options=opcoes)
     return selecoes
 
+def gerar_link_email(filtros, email_destino, carteirinha, ids_estudos):
+    assunto = "Resultados dos Filtros de Estudos Clínicos"
+    
+    # Gera os links simples dos estudos
+    links_estudos = [f"https://clinicaltrials.gov/study/{id_estudo}" for id_estudo in ids_estudos]
+    links_estudos_str = "\n".join(links_estudos)  # Junta todos os links em uma única string, separados por nova linha
+    
+    corpo_email = f"""
+    Filtros Selecionados:
+    - Tipo de Tumor: {filtros['tipo_tumor']}
+    - Estadiamento: {filtros['estadiamento']}
+    - ECOG: {filtros['valor_ecog']}
+    - Biomarcadores Selecionados: {filtros['biomarcadores']}
+    
+    Informações do Paciente:
+    - Carteirinha: {carteirinha}
+    
+    Estudos Filtrados:
+    {links_estudos_str}
+    """
+    
+    # Codifica o corpo do email e o assunto para serem usados em uma URL
+    corpo_email_encoded = urllib.parse.quote(corpo_email)
+    assunto_encoded = urllib.parse.quote(assunto)
+    
+    # Cria o link mailto
+    mailto_link = f"mailto:{email_destino}?subject={assunto_encoded}&body={corpo_email_encoded}"
+    
+    return mailto_link
+
 st.title("Interface de Estudos Clínicos")
 
 col1, col2 = st.columns([1, 2])
@@ -109,26 +140,21 @@ with col1:
     estadiamento = st.selectbox("Selecione o estadiamento", options=[""] + list(equivalencia_estadiamento.keys()))
     valor_ecog = st.text_input('Selecione o ECOG:')
     
-    # Exibe as opções de biomarcadores com base no tipo de tumor selecionado
     if biomarcadores_dict.get(tipo_tumor) != ['X']:
         biomarcadores_resultados = exibir_biomarcadores_e_opcoes(tipo_tumor)
     else:
         st.warning("Nenhum biomarcador disponível para seleção.")
     
 with col2:
-    # Filtra os estudos na ordem correta
     estudos_filtrados = filtrar_estudos_tipo_tumor(estudos_df, tipo_tumor)
     estudos_filtrados = filtrar_estudos_estadiamento(estudos_filtrados, estadiamento)
     estudos_filtrados = filtrar_por_ecog(estudos_filtrados, valor_ecog)
     estudos_filtrados = filtrar_estudos_por_biomarcadores(estudos_filtrados, biomarcadores_resultados)
     
-    # Gerar links clicáveis para o clinicaltrials.gov
     if not estudos_filtrados.empty:
         estudos_filtrados['nctId'] = estudos_filtrados['nctId'].apply(lambda x: f"<a href='https://clinicaltrials.gov/study/{x}' target='_blank'>{x}</a>")
-    
         st.header("Estudos:")
         st.markdown(estudos_filtrados[['nctId', 'briefTitle']].to_html(escape=False, index=False), unsafe_allow_html=True)
-    
         st.header("Critérios de Inclusão/Exclusão")
         criteria_text = "\n".join(estudos_filtrados['eligibilityCriteria'])
         st.text_area("Critérios de inclusão e exclusão:", value=criteria_text, height=150, disabled=True)
@@ -138,9 +164,19 @@ with col2:
 st.header("Submissão de Dados")
 carteirinha = st.text_input("Carteirinha:")
 medico = st.text_input("Médico:")
+email_destino = st.text_input("Email para envio:")
 enviar = st.button("Enviar")
 
 if enviar:
-    st.success("Informações enviadas com sucesso!")
-    if tipo_tumor:
-        st.write("Resultados dos Biomarcadores:", biomarcadores_resultados)
+    filtros = {
+        'tipo_tumor': tipo_tumor,
+        'estadiamento': estadiamento,
+        'valor_ecog': valor_ecog,
+        'biomarcadores': biomarcadores_resultados
+    }
+    ids_estudos = estudos_filtrados['nctId'].tolist()  # Obter a lista de IDs dos estudos filtrados
+    mailto_link = gerar_link_email(filtros, email_destino, carteirinha, ids_estudos)
+    
+    # Usar uma tag <a> diretamente
+    st.markdown(f'<a href="{mailto_link}" target="_blank">Clique aqui para enviar o email</a>', unsafe_allow_html=True)
+
