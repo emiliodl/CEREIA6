@@ -96,9 +96,16 @@ def filtrar_estudos_por_biomarcadores(df, selecoes_biomarcadores):
 def exibir_biomarcadores_e_opcoes(tipo_tumor):
     biomarcadores = biomarcadores_dict.get(tipo_tumor, [])
     selecoes = {}
+    
     for biomarcador in biomarcadores:
-        opcoes = [""] + opcoes_biomarcadores.get(biomarcador, [])  # Adiciona uma opção vazia no início
-        selecoes[biomarcador] = st.selectbox(f'Selecione a opção para {biomarcador}', options=opcoes)
+        if biomarcador == 'Ki-67':
+            # Caixa de texto para entrada numérica
+            selecoes[biomarcador] = st.text_input(f'Insira o valor para {biomarcador} (%)', value='')
+        else:
+            # Selectbox para opções predefinidas
+            opcoes = [""] + opcoes_biomarcadores.get(biomarcador, [])
+            selecoes[biomarcador] = st.selectbox(f'Selecione a opção para {biomarcador}', options=opcoes)
+    
     return selecoes
 
 def gerar_link_email(filtros, email_destino, carteirinha, ids_estudos):
