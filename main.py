@@ -46,13 +46,19 @@ def converter_lista_string_para_lista(string_lista):
 
 def filtrar_estudos_estadiamento(df, estadiamento):
     if estadiamento:
-        estadiamento_valor = equivalencia_estadiamento.get(estadiamento, [])
-        if not estadiamento_valor:
+        estadiamentos_reverso = {}
+        
+        for k, v in equivalencia_estadiamento.items():
+            for x in v:
+                estadiamentos_reverso[x] = k
+        
+        estadiamentos_equivalentes = equivalencia_estadiamento[estadiamentos_reverso[estadiamento]]
+        if not estadiamentos_equivalentes:
             print(f"Estadiamento '{estadiamento}' não encontrado no dicionário de equivalência.")
             return df
 
-        df['Tipo_stages_lista'] = df['Tipo_stages'].apply(converter_lista_string_para_lista)
-        filtrado = df[df['Tipo_stages_lista'].apply(lambda x: any(item in estadiamento_valor for item in x))]
+        estadiamentos_df = df['Tipo_stages'].apply(converter_lista_string_para_lista)
+        filtrado = df[estadiamentos_df.apply(lambda x: any(item in estadiamentos_equivalentes for item in x))]
 
         print(f"Total de registros encontrados: {len(filtrado)}")
 
@@ -100,11 +106,11 @@ def exibir_biomarcadores_e_opcoes(tipo_tumor):
     for biomarcador in biomarcadores:
         if biomarcador == 'Ki-67':
             # Caixa de texto para entrada numérica
-            selecoes[biomarcador] = st.text_input(f'Insira o valor para {biomarcador} (%)', value='')
+            selecoes[biomarcador] = st.text_input(f'Insira o valor para {biomarcador} (%)')
         else:
             # Selectbox para opções predefinidas
-            opcoes = [""] + opcoes_biomarcadores.get(biomarcador, [])
-            selecoes[biomarcador] = st.selectbox(f'Selecione a opção para {biomarcador}', options=opcoes)
+            opcoes = opcoes_biomarcadores.get(biomarcador, [])
+            selecoes[biomarcador] = st.selectbox(f'Selecione a opção para {biomarcador}', options=opcoes, index=None)
     
     return selecoes
 
@@ -138,52 +144,61 @@ def gerar_link_email(filtros, email_destino, carteirinha, ids_estudos):
     
     return mailto_link
 
-st.title("Interface de Estudos Clínicos")
+if __name__ == '__main__':
+    st.title("Interface de Estudos Clínicos")
 
-col1, col2 = st.columns([1, 2])
+    col1, col2 = st.columns([1, 2])
 
-with col1:
-    tipo_tumor = st.selectbox("Selecione o tipo de tumor", options=list(biomarcadores_dict.keys()))
-    estadiamento = st.selectbox("Selecione o estadiamento", options=[""] + list(equivalencia_estadiamento.keys()))
-    valor_ecog = st.text_input('Selecione o ECOG:')
-    
-    if biomarcadores_dict.get(tipo_tumor) != ['X']:
-        biomarcadores_resultados = exibir_biomarcadores_e_opcoes(tipo_tumor)
-    else:
-        st.warning("Nenhum biomarcador disponível para seleção.")
-    
-with col2:
-    estudos_filtrados = filtrar_estudos_tipo_tumor(estudos_df, tipo_tumor)
-    estudos_filtrados = filtrar_estudos_estadiamento(estudos_filtrados, estadiamento)
-    estudos_filtrados = filtrar_por_ecog(estudos_filtrados, valor_ecog)
-    estudos_filtrados = filtrar_estudos_por_biomarcadores(estudos_filtrados, biomarcadores_resultados)
-    
-    if not estudos_filtrados.empty:
-        estudos_filtrados['nctId'] = estudos_filtrados['nctId'].apply(lambda x: f"<a href='https://clinicaltrials.gov/study/{x}' target='_blank'>{x}</a>")
-        st.header("Estudos:")
-        st.markdown(estudos_filtrados[['nctId', 'briefTitle']].to_html(escape=False, index=False), unsafe_allow_html=True)
-        st.header("Critérios de Inclusão/Exclusão")
-        criteria_text = "\n".join(estudos_filtrados['eligibilityCriteria'])
-        st.text_area("Critérios de inclusão e exclusão:", value=criteria_text, height=150, disabled=True)
-    else:
-        st.warning("Nenhum estudo encontrado com os critérios selecionados.")
+    estudos_filtrados = estudos_df.copy()
+    with col1:
+        tipo_tumor = st.selectbox('Tipo de tumor', options=list(biomarcadores_dict.keys()), placeholder='Escolha uma opção', index=None)
+        if tipo_tumor:
+            estudos_filtrados = filtrar_estudos_tipo_tumor(estudos_filtrados, tipo_tumor)
 
-st.header("Submissão de Dados")
-carteirinha = st.text_input("Carteirinha:")
-medico = st.text_input("Médico:")
-email_destino = st.text_input("Email para envio:")
-enviar = st.button("Enviar")
+        estadiamentos_restantes = set(estudos_filtrados['Tipo_stages'].apply(converter_lista_string_para_lista).sum())
+        if len(estadiamentos_restantes) > 0:
+            estadiamento = st.selectbox('Estadiamento', options=list(estadiamentos_restantes), placeholder='Escolha uma opção', index=None)
+            if estadiamento:
+                estudos_filtrados = filtrar_estudos_estadiamento(estudos_filtrados, estadiamento)
 
-if enviar:
-    filtros = {
-        'tipo_tumor': tipo_tumor,
-        'estadiamento': estadiamento,
-        'valor_ecog': valor_ecog,
-        'biomarcadores': biomarcadores_resultados
-    }
-    ids_estudos = estudos_filtrados['nctId'].tolist()  # Obter a lista de IDs dos estudos filtrados
-    mailto_link = gerar_link_email(filtros, email_destino, carteirinha, ids_estudos)
-    
-    # Usar uma tag <a> diretamente
-    st.markdown(f'<a href="{mailto_link}" target="_blank">Clique aqui para enviar o email</a>', unsafe_allow_html=True)
+        valor_ecog = st.text_input('Escala ECOG:', placeholder='Informe um valor da escala')
+        if valor_ecog:
+            estudos_filtrados = filtrar_por_ecog(estudos_filtrados, valor_ecog)
+        
+        biomarcadores_restantes = {}
+        if tipo_tumor:
+            if biomarcadores_dict.get(tipo_tumor):
+                biomarcadores_restantes = exibir_biomarcadores_e_opcoes(tipo_tumor)
+            else:
+                st.warning("Nenhum biomarcador disponível para seleção.")
+        
+        estudos_filtrados = filtrar_estudos_por_biomarcadores(estudos_filtrados, biomarcadores_restantes)
+    with col2:
+        st.header(f'Estudos compatíveis ({len(estudos_filtrados.index)}):')
+        if not estudos_filtrados.empty:
+            estudos_filtrados['nctId'] = estudos_filtrados['nctId'].apply(lambda x: f"<a href='https://clinicaltrials.gov/study/{x}' target='_blank'>{x}</a>")
+            st.markdown(estudos_filtrados[['nctId', 'briefTitle']].to_html(escape=False, index=False), unsafe_allow_html=True)
+            st.header("Critérios de Inclusão/Exclusão")
+            criteria_text = "\n".join(estudos_filtrados['eligibilityCriteria'])
+            st.text_area("Critérios de inclusão e exclusão:", value=criteria_text, height=150, disabled=True)
+        else:
+            st.warning("Nenhum estudo encontrado com os critérios selecionados.")
 
+    st.header("Submissão de Dados")
+    carteirinha = st.text_input("Carteirinha:")
+    medico = st.text_input("Médico:")
+    email_destino = st.text_input("Email para envio:")
+    enviar = st.button("Enviar")
+
+    if enviar:
+        filtros = {
+            'tipo_tumor': tipo_tumor,
+            'estadiamento': estadiamento,
+            'valor_ecog': valor_ecog,
+            'biomarcadores': biomarcadores_restantes
+        }
+        ids_estudos = estudos_filtrados['nctId'].tolist()  # Obter a lista de IDs dos estudos filtrados
+        mailto_link = gerar_link_email(filtros, email_destino, carteirinha, ids_estudos)
+        
+        # Usar uma tag <a> diretamente
+        st.markdown(f'<a href="{mailto_link}" target="_blank">Clique aqui para enviar o email</a>', unsafe_allow_html=True)
