@@ -157,7 +157,7 @@ if __name__ == '__main__':
 
         estadiamentos_restantes = set(estudos_filtrados['Tipo_stages'].apply(converter_lista_string_para_lista).sum())
         if len(estadiamentos_restantes) > 0:
-            estadiamento = st.selectbox('Estadiamento', options=list(estadiamentos_restantes), placeholder='Escolha uma opção', index=None)
+            estadiamento = st.selectbox('Estadiamento', options=list(equivalencia_estadiamento.keys()), placeholder='Escolha uma opção', index=None)
             if estadiamento:
                 estudos_filtrados = filtrar_estudos_estadiamento(estudos_filtrados, estadiamento)
 
