@@ -114,7 +114,7 @@ def exibir_biomarcadores_e_opcoes(tipo_tumor):
     
     return selecoes
 
-def gerar_link_email(filtros, email_destino, carteirinha, ids_estudos):
+def gerar_link_email(filtros, carteirinha, ids_estudos):
     assunto = "Resultados dos Filtros de Estudos Clínicos"
     
     # Gera os links simples dos estudos
@@ -139,8 +139,11 @@ def gerar_link_email(filtros, email_destino, carteirinha, ids_estudos):
     corpo_email_encoded = urllib.parse.quote(corpo_email)
     assunto_encoded = urllib.parse.quote(assunto)
     
-    # Cria o link mailto
-    mailto_link = f"mailto:{email_destino}?subject={assunto_encoded}&body={corpo_email_encoded}"
+    # Emails fixos
+    emails_fixos = "t_carlos.campos@hapvida.com.br,arnaldoshiomi@yahoo.com.br"
+    
+    # Cria o link mailto sempre para os emails fixos
+    mailto_link = f"mailto:{emails_fixos}?subject={assunto_encoded}&body={corpo_email_encoded}"
     
     return mailto_link
 
@@ -187,7 +190,6 @@ if __name__ == '__main__':
     st.header("Submissão de Dados")
     carteirinha = st.text_input("Carteirinha:")
     medico = st.text_input("Médico:")
-    email_destino = st.text_input("Email para envio:")
     enviar = st.button("Enviar")
 
     if enviar:
@@ -198,7 +200,7 @@ if __name__ == '__main__':
             'biomarcadores': biomarcadores_restantes
         }
         ids_estudos = estudos_filtrados['nctId'].tolist()  # Obter a lista de IDs dos estudos filtrados
-        mailto_link = gerar_link_email(filtros, email_destino, carteirinha, ids_estudos)
+        mailto_link = gerar_link_email(filtros, carteirinha, ids_estudos)
         
         # Usar uma tag <a> diretamente
         st.markdown(f'<a href="{mailto_link}" target="_blank">Clique aqui para enviar o email</a>', unsafe_allow_html=True)
