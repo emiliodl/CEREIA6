@@ -176,14 +176,22 @@ if __name__ == '__main__':
                 st.warning("Nenhum biomarcador disponível para seleção.")
         
         estudos_filtrados = filtrar_estudos_por_biomarcadores(estudos_filtrados, biomarcadores_restantes)
+    
     with col2:
         st.header(f'Estudos compatíveis ({len(estudos_filtrados.index)}):')
         if not estudos_filtrados.empty:
             estudos_filtrados['nctId'] = estudos_filtrados['nctId'].apply(lambda x: f"<a href='https://clinicaltrials.gov/study/{x}' target='_blank'>{x}</a>")
             st.markdown(estudos_filtrados[['nctId', 'briefTitle']].to_html(escape=False, index=False), unsafe_allow_html=True)
+            
             st.header("Critérios de Inclusão/Exclusão")
-            criteria_text = "\n".join(estudos_filtrados['eligibilityCriteria'])
-            st.text_area("Critérios de inclusão e exclusão:", value=criteria_text, height=150, disabled=True)
+            
+            # Para cada estudo filtrado, exiba os critérios com link para o estudo correspondente
+            for idx, row in estudos_filtrados.iterrows():
+                criteria = row['eligibilityCriteria']  # Obtenha os critérios do estudo
+                study_link = f"https://clinicaltrials.gov/study/{row['nctId']}"  # Link do estudo
+                
+                # Exiba o critério como link para o estudo correspondente
+                st.markdown(f"<a href='{study_link}' target='_blank'>{criteria}</a>", unsafe_allow_html=True)
         else:
             st.warning("Nenhum estudo encontrado com os critérios selecionados.")
 
