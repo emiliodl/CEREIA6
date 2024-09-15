@@ -191,7 +191,7 @@ if __name__ == '__main__':
                 study_link = f"https://clinicaltrials.gov/study/{row['nctId']}"  # Link do estudo
                 
                 # Exiba o critério como link para o estudo correspondente
-                st.markdown(f"<a href='{study_link}' target='_blank'>{criteria}</a>", unsafe_allow_html=True)
+                st.markdown(f"{study_link}{criteria}</a>", unsafe_allow_html=True)
         else:
             st.warning("Nenhum estudo encontrado com os critérios selecionados.")
 
