@@ -1,3 +1,5 @@
 # python venv
 venv/
 .venv/
+*.pyc
+.vscode/launch.json
