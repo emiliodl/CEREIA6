@@ -3,3 +3,4 @@ venv/
 .venv/
 *.pyc
 .vscode/launch.json
+.env
