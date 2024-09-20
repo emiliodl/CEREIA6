@@ -37,9 +37,14 @@ def send_email(to_email, subject, body):
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:  # type: ignore
             server.starttls()  # Iniciar TLS (segurança)
             server.login(SMTP_USER, SMTP_PASSWORD)  # type: ignore # Fazer login
-            server.sendmail(from_email, to_email, message.as_string())  # type: ignore # Enviar email
-        # print("Email enviado com sucesso!")
+            for dest in to_email.split(","):
+                try:
+                    server.sendmail(from_email, dest, message.as_string())  # type: ignore # Enviar email
+                except Exception as e:
+                    print(f"Erro ao enviar email para {dest}: {e}")
+                    continue
+        print("Email enviado com sucesso!")
         return True
     except Exception as e:
-        # print(f"Ocorreu um erro: {e}")
+        print(f"Ocorreu um erro: {e}")
         return False

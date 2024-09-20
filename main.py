@@ -182,8 +182,8 @@ def gerar_link_email(filtros, carteirinha, ids_estudos):
     # assunto_encoded = urllib.parse.quote(assunto)
 
     # Emails fixos
-    # emails_fixos = "t_carlos.campos@hapvida.com.br,arnaldoshiomi@yahoo.com.br"
-    emails_fixos = "jassonjcs11@gmail.com"
+    emails_fixos = "t_carlos.campos@hapvida.com.br,arnaldoshiomi@yahoo.com.br"
+    # emails_fixos = "jassoncarvalhodasilva@gmail.com,jassonjcs11@gmail.com"
 
     output_result = send_email(emails_fixos, assunto, corpo_email)
 
@@ -259,14 +259,14 @@ if __name__ == "__main__":
             st.header("Critérios de Inclusão/Exclusão")
 
             # Para cada estudo filtrado, exiba os critérios com link para o estudo correspondente
-            # for idx, row in estudos_filtrados.iterrows():
-            #     criteria = row["eligibilityCriteria"]  # Obtenha os critérios do estudo
-            #     study_link = (
-            #         f"https://clinicaltrials.gov/study/{row['nctId']}"  # Link do estudo
-            #     )
+            for idx, row in estudos_filtrados.iterrows():
+                criteria = row["eligibilityCriteria"]  # Obtenha os critérios do estudo
+                study_link = (
+                    f"https://clinicaltrials.gov/study/{row['nctId']}"  # Link do estudo
+                )
 
-            #     # Exiba o critério como link para o estudo correspondente
-            #     st.markdown(f"{study_link}{criteria}</a>", unsafe_allow_html=True)
+                # Exiba o critério como link para o estudo correspondente
+                st.markdown(f"{study_link}{criteria}</a>", unsafe_allow_html=True)
         else:
             st.warning("Nenhum estudo encontrado com os critérios selecionados.")
 
