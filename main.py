@@ -79,7 +79,8 @@ def filtrar_estudos_estadiamento(df, estadiamento):
             )
             return df
 
-        estadiamentos_df = df["Tipo_stages"].apply(converter_lista_string_para_lista)
+        estadiamentos_df = df["Tipo_stages"].apply(
+            converter_lista_string_para_lista)
         filtrado = df[
             estadiamentos_df.apply(
                 lambda x: any(item in estadiamentos_equivalentes for item in x)
@@ -89,7 +90,8 @@ def filtrar_estudos_estadiamento(df, estadiamento):
         print(f"Total de registros encontrados: {len(filtrado)}")
 
         if filtrado.empty:
-            st.warning("Nenhum registro encontrado para o estadiamento selecionado.")
+            st.warning(
+                "Nenhum registro encontrado para o estadiamento selecionado.")
         return filtrado
     else:
         return df
@@ -106,7 +108,8 @@ def filtrar_por_ecog(df, valor_ecog):
         ]
 
         if df_filtrado.empty:
-            st.warning("Nenhum registro encontrado para o valor do ECOG selecionado.")
+            st.warning(
+                "Nenhum registro encontrado para o valor do ECOG selecionado.")
 
         return df_filtrado
     else:
@@ -114,22 +117,22 @@ def filtrar_por_ecog(df, valor_ecog):
 
 
 def filtrar_estudos_por_biomarcadores(df, selecoes_biomarcadores):
-    mask = pd.Series(
-        [True] * len(df), index=df.index
-    )  # Alinhar o índice do mask com o índice do DataFrame
+    df = df.copy()
+    df['biomarcador_match'] = True  # Assume all studies match initially
 
     for biomarcador, valor in selecoes_biomarcadores.items():
-        if valor:  # Aplica o filtro apenas se o valor não estiver vazio
+        if valor:
             coluna = bio_to_column.get(biomarcador)
             if coluna:
-                # Verifique se a coluna contém valores nulos e trate-os
                 if coluna in df.columns:
                     df[coluna] = df[coluna].fillna("")
-                    mask &= df[coluna] == valor
+                    match = df[coluna] == valor
+                    df['biomarcador_match'] &= match
                     print(f"Aplicando filtro: {coluna} == {valor}")
 
-    print(f"Total de registros após filtragem: {mask.sum()} de {len(df)}")
-    return df[mask]
+    print(
+        f"Total de registros após filtragem: {df['biomarcador_match'].sum()} de {len(df)}")
+    return df
 
 
 def exibir_biomarcadores_e_opcoes(tipo_tumor):
@@ -190,7 +193,7 @@ def gerar_link_email(filtros, carteirinha, ids_estudos):
     return output_result
 
 
-if __name__ == "__main__":
+if _name_ == "_main_":
     st.title("Interface de Estudos Clínicos")
 
     col1, col2 = st.columns([1, 2])
@@ -234,10 +237,12 @@ if __name__ == "__main__":
         biomarcadores_restantes = {}
         if tipo_tumor:
             if biomarcadores_dict.get(tipo_tumor):
-                biomarcadores_restantes = exibir_biomarcadores_e_opcoes(tipo_tumor)
+                biomarcadores_restantes = exibir_biomarcadores_e_opcoes(
+                    tipo_tumor)
             else:
                 st.warning("Nenhum biomarcador disponível para seleção.")
 
+        # Apply the modified biomarker filter function
         estudos_filtrados = filtrar_estudos_por_biomarcadores(
             estudos_filtrados, biomarcadores_restantes
         )
@@ -245,30 +250,48 @@ if __name__ == "__main__":
     with col2:
         st.header(f"Estudos compatíveis ({len(estudos_filtrados.index)}):")
         if not estudos_filtrados.empty:
-            estudos_filtrados["nctId"] = estudos_filtrados["nctId"].apply(
-                lambda x: f"<a href='https://clinicaltrials.gov/study/{x}' target='_blank'>{x}</a>"
+            # Sort studies so that matching studies appear first
+            estudos_filtrados = estudos_filtrados.sort_values(
+                by='biomarcador_match', ascending=False
             )
-            # Cria um container scrollable para a tabela
+
+            # Generate the HTML table manually
+            table_html = "<table>"
+            # Add table headers
+            table_html += "<tr><th>NCT ID</th><th>Título</th></tr>"
+            for idx, row in estudos_filtrados.iterrows():
+                study_link = f"<a href='https://clinicaltrials.gov/study/{row['nctId']}' target='_blank'>{row['nctId']}</a>"
+                title = row['briefTitle']
+                if not row['biomarcador_match']:
+                    # Negative study, highlight in red
+                    table_html += f"<tr style='color:red;'><td>{study_link}</td><td>{title}</td></tr>"
+                else:
+                    table_html += f"<tr><td>{study_link}</td><td>{title}</td></tr>"
+            table_html += "</table>"
+
+            # Display the table
             st.markdown(
                 f"<div class='scrollable-table'>"
-                f"{estudos_filtrados[['nctId', 'briefTitle']].to_html(escape=False, index=False)}"
+                f"{table_html}"
                 f"</div>",
                 unsafe_allow_html=True,
             )
 
             st.header("Critérios de Inclusão/Exclusão")
-
-            # Para cada estudo filtrado, exiba os critérios com link para o estudo correspondente
+            # For each study, display the criteria
             for idx, row in estudos_filtrados.iterrows():
-                criteria = row["eligibilityCriteria"]  # Obtenha os critérios do estudo
-                study_link = (
-                    f"https://clinicaltrials.gov/study/{row['nctId']}"  # Link do estudo
-                )
-
-                # Exiba o critério como link para o estudo correspondente
-                st.markdown(f"{study_link}{criteria}</a>", unsafe_allow_html=True)
+                criteria = row["eligibilityCriteria"]
+                study_link = f"https://clinicaltrials.gov/study/{row['nctId']}"
+                if not row['biomarcador_match']:
+                    # Highlight in red
+                    st.markdown(
+                        f"<span style='color:red;'>{study_link}{criteria}</span>", unsafe_allow_html=True)
+                else:
+                    st.markdown(f"{study_link}{criteria}",
+                                unsafe_allow_html=True)
         else:
-            st.warning("Nenhum estudo encontrado com os critérios selecionados.")
+            st.warning(
+                "Nenhum estudo encontrado com os critérios selecionados.")
 
     st.header("Submissão de Dados")
     carteirinha = st.text_input("Carteirinha:")
