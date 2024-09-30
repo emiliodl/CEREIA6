@@ -193,7 +193,7 @@ def gerar_link_email(filtros, carteirinha, ids_estudos):
     return output_result
 
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     st.title("Interface de Estudos Clínicos")
 
     col1, col2 = st.columns([1, 2])
@@ -237,12 +237,11 @@ if _name_ == "_main_":
         biomarcadores_restantes = {}
         if tipo_tumor:
             if biomarcadores_dict.get(tipo_tumor):
-                biomarcadores_restantes = exibir_biomarcadores_e_opcoes(
-                    tipo_tumor)
+                biomarcadores_restantes = exibir_biomarcadores_e_opcoes(tipo_tumor)
             else:
                 st.warning("Nenhum biomarcador disponível para seleção.")
 
-        # Apply the modified biomarker filter function
+        # Aplicar o filtro de biomarcadores com a coluna 'biomarcador_match'
         estudos_filtrados = filtrar_estudos_por_biomarcadores(
             estudos_filtrados, biomarcadores_restantes
         )
@@ -250,26 +249,26 @@ if _name_ == "_main_":
     with col2:
         st.header(f"Estudos compatíveis ({len(estudos_filtrados.index)}):")
         if not estudos_filtrados.empty:
-            # Sort studies so that matching studies appear first
+            # Ordenar estudos para que os correspondentes apareçam primeiro
             estudos_filtrados = estudos_filtrados.sort_values(
                 by='biomarcador_match', ascending=False
             )
 
-            # Generate the HTML table manually
+            # Gerar a tabela HTML manualmente
             table_html = "<table>"
-            # Add table headers
+            # Adicionar cabeçalhos
             table_html += "<tr><th>NCT ID</th><th>Título</th></tr>"
             for idx, row in estudos_filtrados.iterrows():
                 study_link = f"<a href='https://clinicaltrials.gov/study/{row['nctId']}' target='_blank'>{row['nctId']}</a>"
                 title = row['briefTitle']
                 if not row['biomarcador_match']:
-                    # Negative study, highlight in red
+                    # Estudo negativo, destacar em vermelho
                     table_html += f"<tr style='color:red;'><td>{study_link}</td><td>{title}</td></tr>"
                 else:
                     table_html += f"<tr><td>{study_link}</td><td>{title}</td></tr>"
             table_html += "</table>"
 
-            # Display the table
+            # Exibir a tabela
             st.markdown(
                 f"<div class='scrollable-table'>"
                 f"{table_html}"
@@ -277,21 +276,17 @@ if _name_ == "_main_":
                 unsafe_allow_html=True,
             )
 
+            # Filtrar apenas os estudos positivos para exibir os critérios
+            estudos_positivos = estudos_filtrados[estudos_filtrados['biomarcador_match']]
+
             st.header("Critérios de Inclusão/Exclusão")
-            # For each study, display the criteria
-            for idx, row in estudos_filtrados.iterrows():
+            # Iterar apenas sobre os estudos positivos
+            for idx, row in estudos_positivos.iterrows():
                 criteria = row["eligibilityCriteria"]
                 study_link = f"https://clinicaltrials.gov/study/{row['nctId']}"
-                if not row['biomarcador_match']:
-                    # Highlight in red
-                    st.markdown(
-                        f"<span style='color:red;'>{study_link}{criteria}</span>", unsafe_allow_html=True)
-                else:
-                    st.markdown(f"{study_link}{criteria}",
-                                unsafe_allow_html=True)
+                st.markdown(f"{study_link}{criteria}", unsafe_allow_html=True)
         else:
-            st.warning(
-                "Nenhum estudo encontrado com os critérios selecionados.")
+            st.warning("Nenhum estudo encontrado com os critérios selecionados.")
 
     st.header("Submissão de Dados")
     carteirinha = st.text_input("Carteirinha:")
@@ -314,3 +309,4 @@ if _name_ == "_main_":
             st.success("Email enviado com sucesso!")
         else:
             st.error("Falha ao enviar o email.")
+

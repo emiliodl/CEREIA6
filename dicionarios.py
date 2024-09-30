@@ -131,7 +131,7 @@ mesh_dict = {'Lung Neoplasms': ['Carcinoma, Non-Small-Cell Lung'],
              'Gastrointestinal Stromal Tumors': []}
 
 opcoes_biomarcadores = {
-    'HER': ['positivo', 'negativo', 'neutro'],
+    'HER': ['positivo', 'negativo', 'inconclusivo'],
     'Estrogen': ['positivo', 'negativo'],
     'Progesterone': ['positivo', 'negativo'],
     'KRAS': ['mutado', 'não-mutado'],
