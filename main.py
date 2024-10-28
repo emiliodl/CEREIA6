@@ -283,7 +283,7 @@ if __name__ == "__main__":
             # Iterar apenas sobre os estudos positivos
             for idx, row in estudos_positivos.iterrows():
                 criteria = row["eligibilityCriteria"]
-                study_link = f"https://clinicaltrials.gov/study/{row['nctId']}"
+                study_link = f"https://clinicaltrials.gov/study/{row['nctId']}\n"
                 st.markdown(f"{study_link}{criteria}", unsafe_allow_html=True)
         else:
             st.warning("Nenhum estudo encontrado com os critérios selecionados.")
