@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
 import ast
+import logging
+from pathlib import Path
+from datetime import datetime
 import urllib.parse
 from sender import send_email
 from dicionarios import (
@@ -10,6 +13,20 @@ from dicionarios import (
     opcoes_biomarcadores,
     mesh_dict,
 )
+
+logging.basicConfig(
+    filename="email_send_log.log", 
+    level=logging.INFO,
+    format="%(asctime)s - %(message)s",
+)
+
+def contar_envios():
+    log_file = Path("email_send_log.log")
+    if log_file.exists():
+        with open(log_file, "r") as f:
+            lines = f.readlines()
+            return sum(1 for line in lines if "Email enviado" in line)
+    return 0
 
 
 def local_css(file_name):
@@ -195,6 +212,7 @@ def gerar_link_email(filtros, carteirinha, ids_estudos):
 
 if __name__ == "__main__":
     st.title("Interface de Estudos Clínicos")
+    envio_count = contar_envios()
 
     col1, col2 = st.columns([1, 2])
 
@@ -300,13 +318,15 @@ if __name__ == "__main__":
             "valor_ecog": valor_ecog,
             "biomarcadores": biomarcadores_restantes,
         }
-        ids_estudos = estudos_filtrados[
-            "nctId"
-        ].tolist()  # Obter a lista de IDs dos estudos filtrados
+        ids_estudos = estudos_filtrados["nctId"].tolist()
         mailto_link = gerar_link_email(filtros, carteirinha, ids_estudos)
 
         if mailto_link:
             st.success("Email enviado com sucesso!")
         else:
             st.error("Falha ao enviar o email.")
+        
+        # Atualizar a contagem de envios após o envio
+        envio_count += 1
+        st.write(f"Emails enviados: {envio_count}")
 
