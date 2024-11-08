@@ -204,8 +204,8 @@ def gerar_link_email(filtros, carteirinha, ids_estudos):
     # assunto_encoded = urllib.parse.quote(assunto)
 
     # Emails fixos
-    # emails_fixos = "t_carlos.campos@hapvida.com.br,arnaldoshiomi@yahoo.com.br, mariana.amiranda@hapvida.com.br"
-    emails_fixos = "jassoncarvalhodasilva@gmail.com,jassonjcs11@gmail.com"
+    emails_fixos = "t_carlos.campos@hapvida.com.br,arnaldoshiomi@yahoo.com.br, mariana.amiranda@hapvida.com.br"
+    # emails_fixos = "jassoncarvalhodasilva@gmail.com,jassonjcs11@gmail.com"
 
     output_result = send_email(emails_fixos, assunto, corpo_email)
 
