@@ -10,8 +10,6 @@ from sender import send_email
 from driver import (
     initialize_drive,
     initialize_memory_logger,
-    upload_log_to_drive,
-    should_upload_log,
     send,
 )
 from dicionarios import (
