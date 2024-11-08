@@ -329,5 +329,7 @@ if __name__ == "__main__":
 
         if mailto_link:
             st.success("Email enviado com sucesso!")
+            logger.info("Email enviado com sucesso para o(s) destinatário(s).")
+            send(st, drive, logger, log_stream)
         else:
             st.error("Falha ao enviar o email.")
