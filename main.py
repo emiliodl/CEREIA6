@@ -6,6 +6,14 @@ from pathlib import Path
 from datetime import datetime
 import urllib.parse
 from sender import send_email
+from sender import send_email
+from driver import (
+    initialize_drive,
+    initialize_memory_logger,
+    upload_log_to_drive,
+    should_upload_log,
+    send,
+)
 from dicionarios import (
     equivalencia_estadiamento,
     bio_to_column,
@@ -14,19 +22,17 @@ from dicionarios import (
     mesh_dict,
 )
 
-logging.basicConfig(
-    filename="email_send_log.log", 
-    level=logging.INFO,
-    format="%(asctime)s - %(message)s",
-)
+if "drive" not in st.session_state:
+    st.session_state["drive"] = initialize_drive()
+drive = st.session_state["drive"]
 
-def contar_envios():
-    log_file = Path("email_send_log.log")
-    if log_file.exists():
-        with open(log_file, "r") as f:
-            lines = f.readlines()
-            return sum(1 for line in lines if "Email enviado" in line)
-    return 0
+if "log_stream" not in st.session_state:
+    logger, log_stream = initialize_memory_logger()
+    st.session_state["logger"] = logger
+    st.session_state["log_stream"] = log_stream
+else:
+    logger = st.session_state["logger"]
+    log_stream = st.session_state["log_stream"]
 
 
 def local_css(file_name):
@@ -96,8 +102,7 @@ def filtrar_estudos_estadiamento(df, estadiamento):
             )
             return df
 
-        estadiamentos_df = df["Tipo_stages"].apply(
-            converter_lista_string_para_lista)
+        estadiamentos_df = df["Tipo_stages"].apply(converter_lista_string_para_lista)
         filtrado = df[
             estadiamentos_df.apply(
                 lambda x: any(item in estadiamentos_equivalentes for item in x)
@@ -107,8 +112,7 @@ def filtrar_estudos_estadiamento(df, estadiamento):
         print(f"Total de registros encontrados: {len(filtrado)}")
 
         if filtrado.empty:
-            st.warning(
-                "Nenhum registro encontrado para o estadiamento selecionado.")
+            st.warning("Nenhum registro encontrado para o estadiamento selecionado.")
         return filtrado
     else:
         return df
@@ -125,8 +129,7 @@ def filtrar_por_ecog(df, valor_ecog):
         ]
 
         if df_filtrado.empty:
-            st.warning(
-                "Nenhum registro encontrado para o valor do ECOG selecionado.")
+            st.warning("Nenhum registro encontrado para o valor do ECOG selecionado.")
 
         return df_filtrado
     else:
@@ -135,7 +138,7 @@ def filtrar_por_ecog(df, valor_ecog):
 
 def filtrar_estudos_por_biomarcadores(df, selecoes_biomarcadores):
     df = df.copy()
-    df['biomarcador_match'] = True  # Assume all studies match initially
+    df["biomarcador_match"] = True  # Assume all studies match initially
 
     for biomarcador, valor in selecoes_biomarcadores.items():
         if valor:
@@ -144,11 +147,12 @@ def filtrar_estudos_por_biomarcadores(df, selecoes_biomarcadores):
                 if coluna in df.columns:
                     df[coluna] = df[coluna].fillna("")
                     match = df[coluna] == valor
-                    df['biomarcador_match'] &= match
+                    df["biomarcador_match"] &= match
                     print(f"Aplicando filtro: {coluna} == {valor}")
 
     print(
-        f"Total de registros após filtragem: {df['biomarcador_match'].sum()} de {len(df)}")
+        f"Total de registros após filtragem: {df['biomarcador_match'].sum()} de {len(df)}"
+    )
     return df
 
 
@@ -202,8 +206,8 @@ def gerar_link_email(filtros, carteirinha, ids_estudos):
     # assunto_encoded = urllib.parse.quote(assunto)
 
     # Emails fixos
-    emails_fixos = "t_carlos.campos@hapvida.com.br,arnaldoshiomi@yahoo.com.br, mariana.amiranda@hapvida.com.br"
-    # emails_fixos = "jassoncarvalhodasilva@gmail.com,jassonjcs11@gmail.com"
+    # emails_fixos = "t_carlos.campos@hapvida.com.br,arnaldoshiomi@yahoo.com.br, mariana.amiranda@hapvida.com.br"
+    emails_fixos = "jassoncarvalhodasilva@gmail.com,jassonjcs11@gmail.com"
 
     output_result = send_email(emails_fixos, assunto, corpo_email)
 
@@ -212,8 +216,6 @@ def gerar_link_email(filtros, carteirinha, ids_estudos):
 
 if __name__ == "__main__":
     st.title("Interface de Estudos Clínicos")
-    envio_count = contar_envios()
-
     col1, col2 = st.columns([1, 2])
 
     estudos_filtrados = estudos_df.copy()
@@ -245,6 +247,8 @@ if __name__ == "__main__":
                 estudos_filtrados = filtrar_estudos_estadiamento(
                     estudos_filtrados, estadiamento
                 )
+                logger.info(f"Estadiamento selecionado: {estadiamento}")
+                send(st, drive, logger, log_stream)
 
         valor_ecog = st.text_input(
             "Escala ECOG:", placeholder="Informe um valor da escala"
@@ -269,7 +273,7 @@ if __name__ == "__main__":
         if not estudos_filtrados.empty:
             # Ordenar estudos para que os correspondentes apareçam primeiro
             estudos_filtrados = estudos_filtrados.sort_values(
-                by='biomarcador_match', ascending=False
+                by="biomarcador_match", ascending=False
             )
 
             # Gerar a tabela HTML manualmente
@@ -278,8 +282,8 @@ if __name__ == "__main__":
             table_html += "<tr><th>NCT ID</th><th>Título</th></tr>"
             for idx, row in estudos_filtrados.iterrows():
                 study_link = f"<a href='https://clinicaltrials.gov/study/{row['nctId']}' target='_blank'>{row['nctId']}</a>"
-                title = row['briefTitle']
-                if not row['biomarcador_match']:
+                title = row["briefTitle"]
+                if not row["biomarcador_match"]:
                     # Estudo negativo, destacar em vermelho
                     table_html += f"<tr style='color:red;'><td>{study_link}</td><td>{title}</td></tr>"
                 else:
@@ -288,14 +292,14 @@ if __name__ == "__main__":
 
             # Exibir a tabela
             st.markdown(
-                f"<div class='scrollable-table'>"
-                f"{table_html}"
-                f"</div>",
+                f"<div class='scrollable-table'>" f"{table_html}" f"</div>",
                 unsafe_allow_html=True,
             )
 
             # Filtrar apenas os estudos positivos para exibir os critérios
-            estudos_positivos = estudos_filtrados[estudos_filtrados['biomarcador_match']]
+            estudos_positivos = estudos_filtrados[
+                estudos_filtrados["biomarcador_match"]
+            ]
 
             st.header("Critérios de Inclusão/Exclusão")
             # Iterar apenas sobre os estudos positivos
@@ -312,6 +316,8 @@ if __name__ == "__main__":
     enviar = st.button("Enviar")
 
     if enviar:
+        logger.info(f"Submissão de dados: Carteirinha: {carteirinha}, Médico: {medico}")
+        send(st, drive, logger, log_stream)
         filtros = {
             "tipo_tumor": tipo_tumor,
             "estadiamento": estadiamento,
@@ -325,8 +331,3 @@ if __name__ == "__main__":
             st.success("Email enviado com sucesso!")
         else:
             st.error("Falha ao enviar o email.")
-        
-        # Atualizar a contagem de envios após o envio
-        envio_count += 1
-        st.write(f"Emails enviados: {envio_count}")
-
