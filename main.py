@@ -14,11 +14,26 @@ from dicionarios import (
     mesh_dict,
 )
 
+GA_TRACKING_CODE = """
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R7SSHJPNRZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-R7SSHJPNRZ');
+</script>
+"""
+
+st.markdown(GA_TRACKING_CODE, unsafe_allow_html=True)
+
 logging.basicConfig(
-    filename="email_send_log.log", 
+    filename="email_send_log.log",
     level=logging.INFO,
     format="%(asctime)s - %(message)s",
 )
+
 
 def contar_envios():
     log_file = Path("email_send_log.log")
@@ -96,8 +111,7 @@ def filtrar_estudos_estadiamento(df, estadiamento):
             )
             return df
 
-        estadiamentos_df = df["Tipo_stages"].apply(
-            converter_lista_string_para_lista)
+        estadiamentos_df = df["Tipo_stages"].apply(converter_lista_string_para_lista)
         filtrado = df[
             estadiamentos_df.apply(
                 lambda x: any(item in estadiamentos_equivalentes for item in x)
@@ -107,8 +121,7 @@ def filtrar_estudos_estadiamento(df, estadiamento):
         print(f"Total de registros encontrados: {len(filtrado)}")
 
         if filtrado.empty:
-            st.warning(
-                "Nenhum registro encontrado para o estadiamento selecionado.")
+            st.warning("Nenhum registro encontrado para o estadiamento selecionado.")
         return filtrado
     else:
         return df
@@ -125,8 +138,7 @@ def filtrar_por_ecog(df, valor_ecog):
         ]
 
         if df_filtrado.empty:
-            st.warning(
-                "Nenhum registro encontrado para o valor do ECOG selecionado.")
+            st.warning("Nenhum registro encontrado para o valor do ECOG selecionado.")
 
         return df_filtrado
     else:
@@ -135,7 +147,7 @@ def filtrar_por_ecog(df, valor_ecog):
 
 def filtrar_estudos_por_biomarcadores(df, selecoes_biomarcadores):
     df = df.copy()
-    df['biomarcador_match'] = True  # Assume all studies match initially
+    df["biomarcador_match"] = True  # Assume all studies match initially
 
     for biomarcador, valor in selecoes_biomarcadores.items():
         if valor:
@@ -144,11 +156,12 @@ def filtrar_estudos_por_biomarcadores(df, selecoes_biomarcadores):
                 if coluna in df.columns:
                     df[coluna] = df[coluna].fillna("")
                     match = df[coluna] == valor
-                    df['biomarcador_match'] &= match
+                    df["biomarcador_match"] &= match
                     print(f"Aplicando filtro: {coluna} == {valor}")
 
     print(
-        f"Total de registros após filtragem: {df['biomarcador_match'].sum()} de {len(df)}")
+        f"Total de registros após filtragem: {df['biomarcador_match'].sum()} de {len(df)}"
+    )
     return df
 
 
@@ -269,7 +282,7 @@ if __name__ == "__main__":
         if not estudos_filtrados.empty:
             # Ordenar estudos para que os correspondentes apareçam primeiro
             estudos_filtrados = estudos_filtrados.sort_values(
-                by='biomarcador_match', ascending=False
+                by="biomarcador_match", ascending=False
             )
 
             # Gerar a tabela HTML manualmente
@@ -278,8 +291,8 @@ if __name__ == "__main__":
             table_html += "<tr><th>NCT ID</th><th>Título</th></tr>"
             for idx, row in estudos_filtrados.iterrows():
                 study_link = f"<a href='https://clinicaltrials.gov/study/{row['nctId']}' target='_blank'>{row['nctId']}</a>"
-                title = row['briefTitle']
-                if not row['biomarcador_match']:
+                title = row["briefTitle"]
+                if not row["biomarcador_match"]:
                     # Estudo negativo, destacar em vermelho
                     table_html += f"<tr style='color:red;'><td>{study_link}</td><td>{title}</td></tr>"
                 else:
@@ -288,14 +301,14 @@ if __name__ == "__main__":
 
             # Exibir a tabela
             st.markdown(
-                f"<div class='scrollable-table'>"
-                f"{table_html}"
-                f"</div>",
+                f"<div class='scrollable-table'>" f"{table_html}" f"</div>",
                 unsafe_allow_html=True,
             )
 
             # Filtrar apenas os estudos positivos para exibir os critérios
-            estudos_positivos = estudos_filtrados[estudos_filtrados['biomarcador_match']]
+            estudos_positivos = estudos_filtrados[
+                estudos_filtrados["biomarcador_match"]
+            ]
 
             st.header("Critérios de Inclusão/Exclusão")
             # Iterar apenas sobre os estudos positivos
@@ -325,8 +338,7 @@ if __name__ == "__main__":
             st.success("Email enviado com sucesso!")
         else:
             st.error("Falha ao enviar o email.")
-        
+
         # Atualizar a contagem de envios após o envio
         envio_count += 1
         st.write(f"Emails enviados: {envio_count}")
-
