@@ -13,6 +13,7 @@ from dicionarios import (
     opcoes_biomarcadores,
     mesh_dict,
 )
+from streamlit.components.v1 import html
 
 GA_TRACKING_CODE = """
 <!-- Google tag (gtag.js) -->
@@ -26,7 +27,7 @@ GA_TRACKING_CODE = """
 </script>
 """
 
-st.markdown(GA_TRACKING_CODE, unsafe_allow_html=True)
+html(GA_TRACKING_CODE)
 
 logging.basicConfig(
     filename="email_send_log.log",
