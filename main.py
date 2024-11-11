@@ -13,6 +13,22 @@ from dicionarios import (
     opcoes_biomarcadores,
     mesh_dict,
 )
+import logging
+
+# Configuração básica de logging
+logging.basicConfig(
+    level=logging.DEBUG,  # Nível mínimo de mensagens que serão registradas
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Formato da mensagem
+    handlers=[
+        logging.StreamHandler(),  # Envia mensagens para o console
+        logging.FileHandler(
+            "app.log", mode="a", encoding="utf-8"
+        ),  # Registra mensagens em um arquivo
+    ],
+)
+
+# Criar um logger nomeado (opcional)
+logger = logging.getLogger("CEREIA 06 - MVP")
 from streamlit.components.v1 import html
 
 GA_TRACKING_CODE = """
@@ -124,7 +140,7 @@ def filtrar_estudos_estadiamento(df, estadiamento):
             )
         ]
 
-        print(f"Total de registros encontrados: {len(filtrado)}")
+        logger.info(f"Total de registros encontrados: {len(filtrado)}")
 
         if filtrado.empty:
             st.warning("Nenhum registro encontrado para o estadiamento selecionado.")
