@@ -19,12 +19,16 @@ GA_TRACKING_CODE = """
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-R7SSHJPNRZ"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    try{
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-  gtag('config', 'G-R7SSHJPNRZ');
-  console.log("Tracking");
+        gtag('config', 'G-R7SSHJPNRZ');
+        console.log("Tracking");
+    }catch(error){
+        console.error("Erro encontrado:", error);
+    }
 </script>
 """
 
