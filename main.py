@@ -29,6 +29,7 @@ logging.basicConfig(
 
 # Criar um logger nomeado (opcional)
 logger = logging.getLogger("CEREIA 06 - MVP")
+logger.info("Refresh page")
 from streamlit.components.v1 import html
 
 GA_TRACKING_CODE = """
