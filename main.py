@@ -24,6 +24,7 @@ GA_TRACKING_CODE = """
   gtag('js', new Date());
 
   gtag('config', 'G-R7SSHJPNRZ');
+  console.log("Tracking");
 </script>
 """
 
