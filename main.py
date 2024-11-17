@@ -25,7 +25,7 @@ logging.basicConfig(
 
 # Criar um logger nomeado (opcional)
 logger = logging.getLogger("CEREIA 06 - MVP")
-logger.info("Refresh page")
+# logger.info("Refresh page")
 from streamlit.components.v1 import html
 
 GA_TRACKING_CODE = """
@@ -171,9 +171,9 @@ def filtrar_estudos_por_biomarcadores(df, selecoes_biomarcadores):
                     match = df[coluna] == valor
                     df["biomarcador_match"] &= match
                     print(f"Aplicando filtro: {coluna} == {valor}")
-    logger.info(
-        f"Total de registros encontrados: {df['biomarcador_match'].sum()} de {len(df)}"
-    )
+    # logger.info(
+    #     f"Total de registros encontrados: {df['biomarcador_match'].sum()} de {len(df)}"
+    # )
     return df
 
 
