@@ -1,4 +1,6 @@
 import streamlit as st
+
+st.set_page_config(layout="wide")
 import pandas as pd
 import ast
 import logging
@@ -17,14 +19,8 @@ import logging
 
 # Configuração básica de logging
 logging.basicConfig(
-    level=logging.DEBUG,  # Nível mínimo de mensagens que serão registradas
+    level=logging.INFO,  # Nível mínimo de mensagens que serão registradas
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Formato da mensagem
-    handlers=[
-        logging.StreamHandler(),  # Envia mensagens para o console
-        logging.FileHandler(
-            "app.log", mode="a", encoding="utf-8"
-        ),  # Registra mensagens em um arquivo
-    ],
 )
 
 # Criar um logger nomeado (opcional)
@@ -49,13 +45,7 @@ GA_TRACKING_CODE = """
 </script>
 """
 
-html(GA_TRACKING_CODE)
-
-logging.basicConfig(
-    filename="email_send_log.log",
-    level=logging.INFO,
-    format="%(asctime)s - %(message)s",
-)
+# html(GA_TRACKING_CODE, width=0, height=0)
 
 
 def contar_envios():
@@ -75,7 +65,9 @@ def local_css(file_name):
 local_css("style.css")
 
 file_path = "df_final_matches_tipo_cancer_atualizado.csv"
-estudos_df = pd.read_csv(file_path)
+if "original_data" not in st.session_state:
+    st.session_state["original_data"] = pd.read_csv(file_path)
+estudos_df = st.session_state["original_data"]
 
 
 def filtrar_estudos_tipo_tumor(df, tipo_tumor, termo_2=None):
@@ -141,8 +133,6 @@ def filtrar_estudos_estadiamento(df, estadiamento):
             )
         ]
 
-        logger.info(f"Total de registros encontrados: {len(filtrado)}")
-
         if filtrado.empty:
             st.warning("Nenhum registro encontrado para o estadiamento selecionado.")
         return filtrado
@@ -181,9 +171,8 @@ def filtrar_estudos_por_biomarcadores(df, selecoes_biomarcadores):
                     match = df[coluna] == valor
                     df["biomarcador_match"] &= match
                     print(f"Aplicando filtro: {coluna} == {valor}")
-
-    print(
-        f"Total de registros após filtragem: {df['biomarcador_match'].sum()} de {len(df)}"
+    logger.info(
+        f"Total de registros encontrados: {df['biomarcador_match'].sum()} de {len(df)}"
     )
     return df
 
@@ -249,8 +238,8 @@ def gerar_link_email(filtros, carteirinha, ids_estudos):
 if __name__ == "__main__":
     st.title("Interface de Estudos Clínicos")
     envio_count = contar_envios()
-
-    col1, col2 = st.columns([1, 2])
+    isEmpyFilter = False
+    col1, col2, col3 = st.columns([1, 2, 2])
 
     estudos_filtrados = estudos_df.copy()
     with col1:
@@ -303,6 +292,7 @@ if __name__ == "__main__":
     with col2:
         st.header(f"Estudos compatíveis ({len(estudos_filtrados.index)}):")
         if not estudos_filtrados.empty:
+            isEmpyFilter = True
             # Ordenar estudos para que os correspondentes apareçam primeiro
             estudos_filtrados = estudos_filtrados.sort_values(
                 by="biomarcador_match", ascending=False
@@ -332,13 +322,30 @@ if __name__ == "__main__":
             estudos_positivos = estudos_filtrados[
                 estudos_filtrados["biomarcador_match"]
             ]
-
+    with col3:
+        if isEmpyFilter:
             st.header("Critérios de Inclusão/Exclusão")
             # Iterar apenas sobre os estudos positivos
+            table_inclusion_exclusion = "<table>"
             for idx, row in estudos_positivos.iterrows():
                 criteria = row["eligibilityCriteria"]
                 study_link = f"https://clinicaltrials.gov/study/{row['nctId']}\n"
-                st.markdown(f"{study_link}{criteria}", unsafe_allow_html=True)
+                table_inclusion_exclusion += f'\
+                    <tr>\
+                        <td style="padding:10px; border-bottom:1px solid #ddd;">\
+                            <a href="{study_link}" target="_blank">{row["nctId"]}</a>\
+                            <p>{criteria}</p>\
+                        </td>\
+                    </tr>\
+                '
+                # st.markdown(f"{study_link}\n{criteria}", unsafe_allow_html=True)
+            table_inclusion_exclusion += "</table>"
+            st.markdown(
+                f"<div class='scrollable-table'>"
+                f"{table_inclusion_exclusion}"
+                f"</div>",
+                unsafe_allow_html=True,
+            )
         else:
             st.warning("Nenhum estudo encontrado com os critérios selecionados.")
 
@@ -356,6 +363,8 @@ if __name__ == "__main__":
         }
         ids_estudos = estudos_filtrados["nctId"].tolist()
         mailto_link = gerar_link_email(filtros, carteirinha, ids_estudos)
+        logger.info(f"Email foi enviado")
+        logger.info(f"Carteirinha:{carteirinha} Medico:{medico}")
 
         if mailto_link:
             st.success("Email enviado com sucesso!")
