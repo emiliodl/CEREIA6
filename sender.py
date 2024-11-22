@@ -1,6 +1,8 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
 from dotenv import load_dotenv
 import os
 
@@ -14,7 +16,7 @@ SMTP_USER = os.getenv("SMTP_USER")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
 
-def send_email(to_email, subject, body):
+def send_email(to_email, subject, body, files=None):
     """
     Envia um email.
 
@@ -32,6 +34,18 @@ def send_email(to_email, subject, body):
 
     # Adiciona o corpo do email
     message.attach(MIMEText(body, "plain"))
+
+    if files:
+        for file in files:
+            part = MIMEBase("application", "octet-stream")
+            part.set_payload(file["content"])
+            encoders.encode_base64(part)
+            part.add_header(
+                "Content-Disposition",
+                f"attachment; filename={file['name']}",
+            )
+            message.attach(part)
+
     # Enviar o email
     try:
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:  # type: ignore

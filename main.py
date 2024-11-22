@@ -15,16 +15,23 @@ from dicionarios import (
     opcoes_biomarcadores,
     mesh_dict,
 )
-import logging
+import logging, io
 
+last_send_logger_email = None
+
+log_buffer = io.StringIO()
+# Criar um logger nomeado (opcional)
+logger = logging.getLogger("CEREIA 06 - MVP")
+handler = logging.StreamHandler(log_buffer)
 # Configuração básica de logging
 logging.basicConfig(
     level=logging.INFO,  # Nível mínimo de mensagens que serão registradas
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",  # Formato da mensagem
 )
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
-# Criar um logger nomeado (opcional)
-logger = logging.getLogger("CEREIA 06 - MVP")
 # logger.info("Refresh page")
 from streamlit.components.v1 import html
 
@@ -204,10 +211,13 @@ def gerar_link_email(filtros, carteirinha, ids_estudos):
     links_estudos = [
         f"https://clinicaltrials.gov/study/{id_estudo}" for id_estudo in ids_estudos
     ]
+
     links_estudos_str = "\n".join(
         links_estudos
     )  # Junta todos os links em uma única string, separados por nova linha
-
+    logger.info("Estudos finais")
+    for i in links_estudos:
+        logger.info(i)
     corpo_email = f"""
     Filtros Selecionados:
     - Tipo de Tumor: {filtros['tipo_tumor']}
@@ -228,7 +238,7 @@ def gerar_link_email(filtros, carteirinha, ids_estudos):
 
     # Emails fixos
     emails_fixos = "t_carlos.campos@hapvida.com.br,arnaldoshiomi@yahoo.com.br, mariana.amiranda@hapvida.com.br"
-    # emails_fixos = "jassoncarvalhodasilva@gmail.com,jassonjcs11@gmail.com"
+    # emails_fixos = "jassonjcs11@gmail.com"
 
     output_result = send_email(emails_fixos, assunto, corpo_email)
 
@@ -259,6 +269,7 @@ if __name__ == "__main__":
             .apply(converter_lista_string_para_lista)
             .sum()
         )
+        estadiamento = None
         if len(estadiamentos_restantes) > 0:
             estadiamento = st.selectbox(
                 "Estadiamento",
@@ -362,9 +373,22 @@ if __name__ == "__main__":
             "biomarcadores": biomarcadores_restantes,
         }
         ids_estudos = estudos_filtrados["nctId"].tolist()
-        mailto_link = gerar_link_email(filtros, carteirinha, ids_estudos)
         logger.info(f"Email foi enviado")
+        logger.info(f"Tipo de tumor {tipo_tumor}")
         logger.info(f"Carteirinha:{carteirinha} Medico:{medico}")
+        mailto_link = gerar_link_email(filtros, carteirinha, ids_estudos)
+        log_buffer.seek(0)
+        send_email(
+            "Kelly.lima.88@gmail.com",
+            "Logs de utilização",
+            "Segue em anexo o arquivo de log",
+            [
+                {
+                    "name": f"{datetime.now()}.log",
+                    "content": log_buffer.read().encode("utf-8"),
+                }
+            ],
+        )
 
         if mailto_link:
             st.success("Email enviado com sucesso!")
