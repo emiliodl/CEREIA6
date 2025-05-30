@@ -1,7 +1,10 @@
 # python venv
 venv/
+*venv/
 .venv/
 *.pyc
 .vscode/launch.json
 .env
 __pycache__/
+get-pip.py
+streamlit.log

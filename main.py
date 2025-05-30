@@ -1,5 +1,5 @@
 import streamlit as st
-
+# import streamlit_analytics
 st.set_page_config(layout="wide")
 import pandas as pd
 import ast
@@ -15,6 +15,8 @@ from dicionarios import (
     opcoes_biomarcadores,
     mesh_dict,
 )
+# streamlit_analytics.start_tracking()
+# or pass the same arg to `stop_tracking`
 import logging, io
 
 last_send_logger_email = None
@@ -35,25 +37,39 @@ logger.addHandler(handler)
 # logger.info("Refresh page")
 from streamlit.components.v1 import html
 
-GA_TRACKING_CODE = """
+GA_ID = "google_analytics"
+GA_TRACKING_CODE = f"""
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-R7SSHJPNRZ"></script>
-<script>
-    try{
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+<script id='{GA_ID}'>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
 
-        gtag('config', 'G-R7SSHJPNRZ');
-        console.log("Tracking");
-    }catch(error){
-        console.error("Erro encontrado:", error);
-    }
+  gtag('config', 'G-R7SSHJPNRZ');
 </script>
 """
 
-# html(GA_TRACKING_CODE, width=0, height=0)
+from bs4 import BeautifulSoup
+import pathlib
+import shutil
 
+
+def inject_ga():
+    
+    index_path = pathlib.Path(st.__file__).parent / "static" / "index.html"
+    soup = BeautifulSoup(index_path.read_text(), features="html.parser")
+    if not soup.find(id=GA_ID): 
+        bck_index = index_path.with_suffix('.bck')
+        if bck_index.exists():
+            shutil.copy(bck_index, index_path)  
+        else:
+            shutil.copy(index_path, bck_index)  
+        html = str(soup)
+        new_html = html.replace('<head>', '<head>\n' + GA_TRACKING_CODE)
+        index_path.write_text(new_html)
+
+inject_ga()
 
 def contar_envios():
     log_file = Path("email_send_log.log")
@@ -237,7 +253,7 @@ def gerar_link_email(filtros, carteirinha, ids_estudos):
     # assunto_encoded = urllib.parse.quote(assunto)
 
     # Emails fixos
-    emails_fixos = "t_carlos.campos@hapvida.com.br,arnaldoshiomi@yahoo.com.br, mariana.amiranda@hapvida.com.br"
+    emails_fixos = "t_carlos.campos@hapvida.com.br,arnaldoshiomi@yahoo.com.br,t_joaquim.sousa@hapvida.com.br"
     # emails_fixos = "jassonjcs11@gmail.com"
 
     output_result = send_email(emails_fixos, assunto, corpo_email)
@@ -398,3 +414,4 @@ if __name__ == "__main__":
         # Atualizar a contagem de envios após o envio
         envio_count += 1
         st.write(f"Emails enviados: {envio_count}")
+# streamlit_analytics.stop_tracking()
