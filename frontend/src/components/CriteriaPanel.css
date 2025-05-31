@@ -1,26 +1,40 @@
 .criteria-panel {
-  padding: 10px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .criteria-scrollable {
-  max-height: 500px;
+  flex: 1;
   overflow-y: auto;
+  max-height: calc(4 * 130px + 50px); /* Mesma altura que a tabela de estudos */
+  padding: 0.5rem;
 }
 
 .criteria-item {
-  margin-bottom: 20px;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 15px;
+  margin-bottom: 1.25rem;
+  background-color: var(--background);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.criteria-item:last-child {
+  margin-bottom: 0;
 }
 
 .criteria-header {
-  margin-bottom: 10px;
+  padding: 0.75rem 1rem;
+  background-color: var(--primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .criteria-header a {
-  color: #2980b9;
+  color: var(--text-light);
+  font-weight: 500;
   text-decoration: none;
-  font-weight: bold;
 }
 
 .criteria-header a:hover {
@@ -28,5 +42,32 @@
 }
 
 .criteria-content {
+  padding: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-dark);
   white-space: pre-wrap;
+}
+
+.criteria-title {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--primary-dark);
+}
+
+.empty-criteria {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--gray-dark);
+  flex-direction: column;
+  padding: 2rem;
+  text-align: center;
+}
+
+.empty-criteria-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--gray-dark);
 }

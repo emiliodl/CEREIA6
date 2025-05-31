@@ -1,10 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@500;600;700&display=swap');
+
+:root {
+  --primary: #2c62a9; /* Azul médico/hospitalar principal */
+  --primary-light: #3a7bd5;
+  --primary-dark: #1d4580;
+  --secondary: #20a88c; /* Verde para ações positivas */
+  --secondary-light: #2dbea0;
+  --secondary-dark: #178a73;
+  --accent: #ff7043; /* Laranja para destaques */
+  --gray-light: #f5f7fa;
+  --gray-medium: #e4e7eb;
+  --gray-dark: #64748b;
+  --text-dark: #1e293b;
+  --text-light: #ffffff;
+  --error: #e53935;
+  --success: #43a047;
+  --warning: #ff9800;
+  --background: #ffffff;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: var(--text-dark);
+  background-color: var(--gray-light);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--primary-dark);
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--primary-light);
+  text-decoration: underline;
+}
+
+button {
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
 }
 
 code {

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
-import FilterPanel from './components/FilterPanel';
+import TabPanel from './components/TabPanel';
 import StudiesTable from './components/StudiesTable';
 import CriteriaPanel from './components/CriteriaPanel';
-import EmailForm from './components/EmailForm';
 
 const API_URL = 'http://localhost:5000/api';
 
@@ -113,7 +112,8 @@ function App() {
       
       <div className="main-content">
         <div className="filter-column">
-          <FilterPanel 
+          <TabPanel 
+            // Props para FilterPanel
             tumorTypes={tumorTypes}
             selectedTumorType={selectedTumorType}
             setSelectedTumorType={setSelectedTumorType}
@@ -126,6 +126,18 @@ function App() {
             setEcogScore={setEcogScore}
             onApplyFilters={applyFilters}
             isLoading={isLoading}
+            
+            // Props para EmailForm
+            carteirinha={carteirinha}
+            setCarteirinha={setCarteirinha}
+            medico={medico}
+            setMedico={setMedico}
+            onSubmit={handleSendEmail}
+            emailSent={emailSent}
+            emailError={emailError}
+            
+            // Estado dos estudos
+            hasStudies={studies.length > 0}
           />
         </div>
         
@@ -135,19 +147,6 @@ function App() {
         
         <div className="criteria-column">
           <CriteriaPanel studies={filteredStudies} />
-          
-          <div className="email-section">
-            <h2>Submissão de Dados</h2>
-            <EmailForm 
-              carteirinha={carteirinha}
-              setCarteirinha={setCarteirinha}
-              medico={medico}
-              setMedico={setMedico}
-              onSubmit={handleSendEmail}
-              emailSent={emailSent}
-              emailError={emailError}
-            />
-          </div>
         </div>
       </div>
     </div>

@@ -13,21 +13,25 @@
   }
 }
 
-.App-header {
-  background-color: #282c34;
+.app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-  text-align: center;
-  margin-bottom: 30px;
 }
 
-.App-header h1 {
-  color: #2c3e50;
+.app-header {
+  background-color: var(--primary);
+  color: var(--text-light);
+  padding: 1.5rem 2rem;
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: var(--text-light);
+  text-align: center;
 }
 
 .App-link {
@@ -35,29 +39,78 @@
 }
 
 .main-content {
+  flex: 1;
   display: grid;
-  grid-template-columns: 1fr 2fr 2fr;
-  gap: 20px;
+  grid-template-columns: 320px 1fr 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+  align-items: start; /* Importante: para evitar que os cartões esticam */
+}
+
+.card {
+  background-color: var(--background);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  background-color: var(--primary);
+  color: var(--text-light);
+  padding: 1rem 1.5rem;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text-light);
+}
+
+.card-body {
+  padding: 1.5rem;
+  flex: 1;
+  overflow: auto;
 }
 
 .filter-column,
 .results-column,
 .criteria-column {
-  background: #f5f5f5;
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.results-column,
+.criteria-column {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .email-section {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #ddd;
+  margin-top: 1.5rem;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--gray-medium);
+  margin: 1.5rem 0;
+}
+
+.studies-table-container,
+.criteria-panel {
+  height: auto;
 }
 
 @media (max-width: 1200px) {
   .main-content {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 1.5rem;
   }
 }
 
