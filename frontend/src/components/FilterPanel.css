@@ -1,0 +1,50 @@
+.filter-panel {
+  padding: 10px;
+}
+
+.filter-section {
+  margin-bottom: 20px;
+}
+
+.filter-section label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.filter-section select,
+.filter-section input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.biomarkers-section {
+  border-top: 1px solid #ddd;
+  padding-top: 15px;
+}
+
+.biomarker-input {
+  margin-bottom: 10px;
+}
+
+.apply-filters-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #2980b9;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.apply-filters-btn:hover {
+  background-color: #3498db;
+}
+
+.apply-filters-btn:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}

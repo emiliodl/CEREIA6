@@ -1,0 +1,32 @@
+.criteria-panel {
+  padding: 10px;
+}
+
+.criteria-scrollable {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.criteria-item {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+}
+
+.criteria-header {
+  margin-bottom: 10px;
+}
+
+.criteria-header a {
+  color: #2980b9;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.criteria-header a:hover {
+  text-decoration: underline;
+}
+
+.criteria-content {
+  white-space: pre-wrap;
+}

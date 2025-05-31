@@ -1,0 +1,49 @@
+.studies-table-container {
+  padding: 10px;
+}
+
+.scrollable-table {
+  max-height: 500px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+}
+
+.studies-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.studies-table th,
+.studies-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.studies-table th {
+  background-color: #f2f2f2;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.studies-table a {
+  color: #2980b9;
+  text-decoration: none;
+}
+
+.studies-table a:hover {
+  text-decoration: underline;
+}
+
+.non-matching-study {
+  color: #e74c3c;
+}
+
+.loading,
+.no-studies {
+  padding: 20px;
+  text-align: center;
+  font-style: italic;
+  color: #7f8c8d;
+}

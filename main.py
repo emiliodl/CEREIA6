@@ -8,7 +8,7 @@ from pathlib import Path
 from datetime import datetime
 import urllib.parse
 from sender import send_email
-from dicionarios import (
+from backend.dicionarios import (
     equivalencia_estadiamento,
     bio_to_column,
     biomarcadores_dict,
